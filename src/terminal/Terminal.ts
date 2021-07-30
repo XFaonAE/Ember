@@ -1,9 +1,9 @@
 import chalk from "chalk";
+import Stdin from "./Stdin";
 
 export default class Terminal {
-    public charset: any = {
-        logIcon: "•"
-    }
+    public stdin: Stdin = new Stdin()
+    public charset: any = {logIcon: "•"}
 
     public log(message: string) {
         console.info(chalk.rgb(116, 189, 221)(this.charset.logIcon) + "  " + message)

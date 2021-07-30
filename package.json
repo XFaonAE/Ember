@@ -2,10 +2,11 @@
   "name": "@axeridev/ember",
   "version": "0.0.1",
   "description": "Ember Framework",
-  "main": "./dist/ember.js",
+  "main": "./compiled/ember.js",
   "scripts": {
+    "postinstall": "npm install typescript && npx tsc && npm uninstall typescript",
     "dev": "tsc --watch",
-    "test": "node ./dist/test/Test.js"
+    "test": "node ./compiled/test/Test.js"
   },
   "repository": {
     "type": "git",
