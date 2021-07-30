@@ -14,7 +14,17 @@ server.on("ready", () => {
 })
 
 server.on("open", (connection: ServerConnection) => {
-    console.log("new connection | accepted the connection")
+    setTimeout(() => {
+        connection.reject()
+    }, 1000)
+
+    connection.on("accept", () => {
+        terminal.log("Connection accepted")
+    })
+
+    connection.on("reject", () => {
+        terminal.error("Connection rejected")
+    })
 })
 
 server.run()
