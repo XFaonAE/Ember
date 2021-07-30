@@ -1,5 +1,6 @@
+import ServerConnection from "./ServerConnection";
 export interface ServerOptions {
-    port: number;
+    port?: number;
     host?: string;
     accessInfo?: {
         user: string;
@@ -16,7 +17,19 @@ export interface ServerOptions {
         password?: string;
     }>;
 }
+declare const defaultServerOptions: ServerOptions;
+export { defaultServerOptions };
 export default class Server {
+    config: ServerOptions;
+    private events;
+    private httpServer;
+    private webSocketServer;
     constructor(options: ServerOptions);
+    private createSocket;
+    private attachHttp;
+    run(): void;
+    on(event: "error", callback: (error: string) => any): void;
+    on(event: "open", callback: (connection: ServerConnection) => any): void;
+    on(event: "ready", callback: () => any): void;
 }
 //# sourceMappingURL=Server.d.ts.map
