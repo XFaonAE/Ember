@@ -1,0 +1,27 @@
+{
+  "name": "@axeridev/ember",
+  "version": "0.0.1",
+  "description": "Ember Framework",
+  "main": "./dist/ember.js",
+  "scripts": {
+    "dev": "tsc --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AxeriDev/Ember.git"
+  },
+  "keywords": [
+    "Framework",
+    "Axeri"
+  ],
+  "author": "Axeri LLC [ support@axeri.net ]",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/AxeriDev/Ember/issues"
+  },
+  "homepage": "https://github.com/AxeriDev/Ember#readme",
+  "devDependencies": {
+    "@types/node": "^16.4.7",
+    "typescript": "^4.3.5"
+  }
+}
