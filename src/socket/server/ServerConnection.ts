@@ -1,4 +1,4 @@
-import {request as WebSocketRequest,connection as WebSocketConnection } from "websocket"
+import {request as WebSocketRequest, connection as WebSocketConnection, connection} from "websocket"
 
 export default class ServerConnection {
     private connectionStatus: "accepted"|"requesting" = "requesting"
@@ -7,6 +7,7 @@ export default class ServerConnection {
 
     public webSocketConnection: WebSocketConnection|null = null
     public id: string = ""
+    public props: {[index: string]: any} = {}
 
     public constructor(webSocketConnectionRequest: WebSocketRequest) {
         this.webSocketConnectionRequest = webSocketConnectionRequest
@@ -26,7 +27,9 @@ export default class ServerConnection {
 
                     this.events.message.forEach((event: any) => {
                         if (msg.channel == event.channel) {
-                            event.callback(msg.message)
+                            event.callback(msg.message, (reply: {[index: string]: any}) => {
+                                this.send(reply, event.channel, true)
+                            })
                         }
                     })
                 } catch (e: any) {
@@ -38,6 +41,18 @@ export default class ServerConnection {
         }
 
         throw new Error("This connection has already been accepted")
+    }
+
+    public send(message: {[index: string]: any}, channel: string, reply: boolean = false) {
+        try {
+            this.webSocketConnection?.sendUTF(JSON.stringify({
+                channel: channel,
+                reply: reply,
+                message: message
+            }))
+        } catch (e: any) {
+            // TODO: Handle? :3 Please
+        }
     }
 
     public reject() {
@@ -63,7 +78,7 @@ export default class ServerConnection {
     public on(event: "close", callback: () => any): void
     public on(event: "reject", callback: () => any): void
     public on(event: "accept", callback: () => any): void
-    public on(event: "message", callback: (message: any) => any, channel: string,): void
+    public on(event: "message", callback: (message: {[index: string]: any}, reply: (message: {[index: string]: any}) => any) => any, channel: string,): void
 
     public on(event: any, callback: any, channel?: string) {
         if (event == "message") {

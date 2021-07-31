@@ -130,9 +130,13 @@ export default class Server {
 
     public rootControlCheck() {
         this.on("open", (connection: ServerConnection) => {
-            connection.on("message", (message: any) => {
+            connection.on("message", (message: any, reply: CallableFunction) => {
                 if (message.user == this.config.accessInfo?.user && message.password == this.config.accessInfo?.password) {
-                    console.log("vALIDATED 1 conn")
+                    connection.props.root = true
+
+                    reply({
+                        msg: "success! ROOT GIVEN AT " + new Date() + " /o\\"
+                    })
                 }
             }, "root")
         })

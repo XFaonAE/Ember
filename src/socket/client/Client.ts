@@ -56,6 +56,10 @@ export default class Client {
                     user: this.config.root.user,
                     password: this.config.root.password
                 }, "root")
+
+                connection.on("reply", (message: any) => {
+                    console.log(message)
+                }, "root")
             }
         })
     }
