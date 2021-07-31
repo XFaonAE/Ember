@@ -2,7 +2,19 @@ import {socket, terminal} from "../src/Main";
 import ServerConnection from "../src/socket/server/ServerConnection";
 
 const server = socket.createServer({
-    port: 8080
+    port: 8080,
+    accessInfo: {
+        user: "test-user",
+        password: "test-password"
+    },
+    cluster: [
+        {
+            port: 8080,
+            host: "localhost",
+            user: "test-user",
+            password: "test-password"
+        }
+    ]
 })
 
 if (!server.config.ssl) {
@@ -14,17 +26,7 @@ server.on("ready", () => {
 })
 
 server.on("open", (connection: ServerConnection) => {
-    setTimeout(() => {
-        connection.reject()
-    }, 1000)
-
-    connection.on("accept", () => {
-        terminal.log("Connection accepted")
-    })
-
-    connection.on("reject", () => {
-        terminal.error("Connection rejected")
-    })
+    connection.accept()
 })
 
 server.run()

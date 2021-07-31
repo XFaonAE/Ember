@@ -6,6 +6,7 @@ export default class ServerConnection {
     private events: any = {message: [], close: [], accept: [], reject: []}
 
     public webSocketConnection: WebSocketConnection|null = null
+    public id: string = ""
 
     public constructor(webSocketConnectionRequest: WebSocketRequest) {
         this.webSocketConnectionRequest = webSocketConnectionRequest
@@ -18,6 +19,21 @@ export default class ServerConnection {
             this.events.accept.forEach((event: any) => {
                 event()
             })
+
+            this.webSocketConnection.on("message", (message: any) => {
+                try {
+                    const msg = JSON.parse(message.utf8Data)
+
+                    this.events.message.forEach((event: any) => {
+                        if (msg.channel == event.channel) {
+                            event.callback(msg.message)
+                        }
+                    })
+                } catch (e: any) {
+                    // TODO: Add new event called "messageIgnoreChecks" for any data type messages
+                }
+            })
+
             return
         }
 
@@ -47,8 +63,17 @@ export default class ServerConnection {
     public on(event: "close", callback: () => any): void
     public on(event: "reject", callback: () => any): void
     public on(event: "accept", callback: () => any): void
+    public on(event: "message", callback: (message: any) => any, channel: string,): void
 
-    public on(event: any, callback: any) {
+    public on(event: any, callback: any, channel?: string) {
+        if (event == "message") {
+            this.events.message.push({
+                channel: channel,
+                callback: callback
+            })
+            return
+        }
+
         this.events[event].push(callback)
     }
 }

@@ -1,7 +1,10 @@
 import ServerConnection from "./ServerConnection";
+import ConnectionManager from "./ConnectionManager";
 import * as https from "https";
 import http, {IncomingMessage, ServerResponse} from "http";
-import {server as WebSocketServer, request as WebSocketRequest} from "websocket";
+import {server as WebSocketServer, request as WebSocketRequest, connection} from "websocket";
+import ClientConnection from "../client/ClientConnection";
+import {socket} from "../../Main";
 
 export interface ServerOptions {
     port?: number
@@ -30,16 +33,14 @@ export {defaultServerOptions}
 
 export default class Server {
     public config: ServerOptions
+    public connectionManager: ConnectionManager = new ConnectionManager()
 
     private events: any = {error: [], open: [], ready: []}
     private httpServer: https.Server|http.Server|null = null
     private webSocketServer: WebSocketServer|null = null
 
     public constructor(options: ServerOptions) {
-        this.config = {
-            ...defaultServerOptions,
-            ...options
-        }
+        this.config = {...defaultServerOptions, ...options}
 
         this.attachHttp()
         this.createSocket()
@@ -59,7 +60,38 @@ export default class Server {
                     event(connection)
                 })
             })
+
+            this.on("ready", () => {
+                this.rootControlCheck()
+                this.connectNodes()
+            })
+
+            this.on("open", (connection: ServerConnection) => {
+                connection.on("accept", () => {
+                    const clientId = "id" + Math.random()
+                    this.connectionManager.appendClient(clientId, connection)
+
+                    connection.on("close", () => {
+                        this.connectionManager.removeClient(clientId)
+                    })
+                })
+            })
         }
+    }
+
+    private connectNodes() {
+        this.config.cluster?.forEach((node: any) => {
+            const connection = socket.createClient({
+                port: node.port,
+                host: node.host,
+                root: {
+                    user: node.user,
+                    password: node.password
+                }
+            })
+
+            connection.connect()
+        })
     }
 
     private attachHttp() {
@@ -94,6 +126,16 @@ export default class Server {
         } else {
             this.httpServer = http.createServer(httpRequest)
         }
+    }
+
+    public rootControlCheck() {
+        this.on("open", (connection: ServerConnection) => {
+            connection.on("message", (message: any) => {
+                if (message.user == this.config.accessInfo?.user && message.password == this.config.accessInfo?.password) {
+                    console.log("vALIDATED 1 conn")
+                }
+            }, "root")
+        })
     }
 
     public run() {

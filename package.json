@@ -2,7 +2,7 @@
   "name": "@axeridev/ember",
   "version": "0.0.1",
   "description": "Ember Framework",
-  "main": "./compiled/ember.js",
+  "main": "./compiled/src/Main.js",
   "scripts": {
     "postinstall": "npm install typescript && npx tsc && npm uninstall typescript",
     "dev": "tsc --watch",
