@@ -1,12 +1,14 @@
 import chalk from "chalk";
 import Stdin from "./Stdin";
+import Tag from "./Tag";
 
 export default class Terminal {
-    public stdin: Stdin = new Stdin()
-    public charset: any = {logIcon: "•"}
+    public stdin: Stdin = new Stdin();
+    public tag: Tag = new Tag();
+    public charset: any = { logIcon: "•" };
 
     public log(message: string) {
-        console.info(chalk.rgb(116, 189, 221)(this.charset.logIcon) + "  " + message)
+        console.info(chalk.hex("#74bddd")(this.charset.logIcon) + "  " + message)
     }
 
     public error(message: string) {
@@ -19,5 +21,13 @@ export default class Terminal {
 
     public warning(message: string) {
         console.warn(chalk.hex("#ffff55")(this.charset.logIcon) + "  " + message)
+    }
+
+    public hex(hex: string, text: string) {
+        return chalk.hex(hex)(text);
+    }
+
+    public bgHex(hex: string, text: string) {
+        return chalk.bgHex(hex)(text);
     }
 }

@@ -1,9 +1,15 @@
-import { ServerNode } from "./server/SocketServer";
-import {socket} from "../Main";
+import {ServerNode, ServerOptions} from "./server/SocketServer";
+import { socket, terminal } from "../Main";
 import ClientConnection from "./client/ClientConnection";
 
 export default class NodeHelper {
-    public connect(nodes: ServerNode[]) {
+    public connectedAll = false;
+    public nodes: ClientConnection[] = [];
+
+    public connect(nodes: ServerNode[], config: ServerOptions, callback: () => any) {
+        let index = 0;
+        const count = nodes.length;
+
         nodes.forEach((nodeConfig: ServerNode) => {
             const node = socket.createClient({
                 port: nodeConfig.port,
@@ -11,13 +17,87 @@ export default class NodeHelper {
             });
 
             node.on("open", (conn: ClientConnection) => {
-                node.send({
+                const next = () => {
+                    if ((count - 1) == index) {
+                        this.connectedAll = true;
+                        callback();
+                        return;
+                    }
+                    index++;
+                }
+
+                conn.send({
                     user: nodeConfig.auth?.user,
                     password: nodeConfig.auth?.password
                 }, "nodeAccess");
-            })
 
-            node.run()
+                conn.on("message", (message: any) => {
+                    if (message.token && nodeConfig.logStats) {
+                        terminal.tag.success("Access granted to node: " + nodeConfig.host + (nodeConfig.port ? ":" + nodeConfig.port : ""));
+                    }
+
+                    if (message.token) {
+                        conn.props.id = nodeConfig.host + (nodeConfig.port ? ":" + nodeConfig.port : "");
+                        this.nodes.push(conn);
+                        conn.props.token = message.token;
+                        conn.props.node = true;
+                        next();
+                    }
+                }, "nodeAccess");
+
+                conn.on("message", (message: any) => {
+                    if (message.error) {
+                        let errorMessage = "Undefined error";
+
+                        switch (message.error) {
+                            case 1000:
+                                errorMessage = "Invalid credentials"
+                                break;
+                        }
+
+                        if (nodeConfig.logStats) {
+                            terminal.tag.error(errorMessage);
+                            terminal.tag.error("The connection to the server has been closed");
+                            terminal.tag.error("Failed to get node control token");
+                        }
+                    }
+                }, "close");
+            });
+
+            node.on("error", () => {
+                setTimeout(() => {
+                    if (nodeConfig.logStats) {
+                        terminal.tag.warning("A node failed to connect, reconnecting. Note this is normal to happen");
+                        terminal.tag.warning("Debug Info: connecting-to = " + nodeConfig.host + (nodeConfig.port ? ":" + nodeConfig.port : "") + " at = " + config.host + (config.port ? ":" + config.port : ""));
+                    }
+                    node.run();
+                }, 300);
+            });
+
+            node.run();
         });
+    }
+
+    public getNodeConnection(nodeId: string): ClientConnection|undefined {
+        let returnValue: any;
+
+        this.nodes.forEach((node: ClientConnection) => {
+            if (node.props.id == nodeId) {
+                returnValue = node;
+            }
+        });
+
+        return returnValue;
+    }
+
+    public sendNetwork(nodeId: string, client: string, message: { [index: string]: any }, channel: string) {
+        const node = this.getNodeConnection(nodeId);
+
+        node?.send({
+            channel: channel,
+            message: message,
+            client: client,
+            token: node.props.token
+        }, "nodeSendClient");
     }
 }

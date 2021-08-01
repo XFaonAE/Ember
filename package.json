@@ -1,5 +1,5 @@
 {
-  "name": "@axeridev/ember",
+  "name": "axeri-ember",
   "version": "0.0.1",
   "description": "Ember Framework",
   "main": "./compiled/src/Main.js",

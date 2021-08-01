@@ -26,6 +26,10 @@ export default class SocketClient {
     private createSocket() {
         this.socket = new client();
 
+        this.socket.on("connectFailed", () => {
+            this.events.error.forEach((event: any) => event());
+        });
+
         this.socket.on("connect", (connection: connection) => {
             const clientConnection = new ClientConnection(connection);
 
@@ -40,12 +44,9 @@ export default class SocketClient {
     }
 
     public on(event: "open", callback: (connection: ClientConnection) => any): void;
+    public on(event: "error", callback: () => any): void;
 
     public on(event: any, callback: any) {
         this.events[event].push(callback);
-    }
-
-    public send(message: any, channel: string) {
-
     }
 }
