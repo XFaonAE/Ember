@@ -62,11 +62,6 @@ export default class SocketServer {
                 })
             })
 
-            this.on("ready", () => {
-                this.rootControlCheck()
-                this.connectNodes()
-            })
-
             this.on("open", (connection: ServerConnection) => {
                 connection.server = this
 
@@ -80,34 +75,6 @@ export default class SocketServer {
                 })
             })
         }
-    }
-
-    private connectNodes() {
-        this.config.cluster?.forEach((node: any) => {
-            const client = socket.createClient({
-                port: node.port,
-                host: node.host,
-                root: {
-                    user: node.user,
-                    password: node.password
-                }
-            })
-
-            client.on("open", (connection: ClientConnection) => {
-                connection.on("reply", (reply: any) => {
-                    if (reply.root) {
-                        let nodeId = this.config.host ? this.config.host : defaultServerOptions.host
-                        if (this.config.port) {
-                            nodeId += ":" + this.config.port
-                        }
-
-                        this.connectionManager.appendNode(<string>nodeId, connection)
-                    }
-                }, "root")
-            })
-
-            client.connect()
-        })
     }
 
     private attachHttp() {
@@ -142,42 +109,6 @@ export default class SocketServer {
         } else {
             this.httpServer = http.createServer(httpRequest)
         }
-    }
-
-    public rootControlCheck() {
-        const verify = (connection: ServerConnection, valid: () => any) => {
-            if (!connection.props.root) {
-                connection.close()
-                return
-            }
-
-            valid()
-        }
-
-        this.on("open", (connection: ServerConnection) => {
-            connection.on("message", (message: any, reply: CallableFunction) => {
-                if (message.user == this.config.accessInfo?.user && message.password == this.config.accessInfo?.password) {
-                    connection.props.root = true
-                    reply({
-                        root: true
-                    })
-                } else {
-                    reply({
-                        root: false
-                    })
-                    connection.close()
-                }
-            }, "root")
-
-            connection.on("message", (message: SocketMessage) => {
-                verify(connection, () => {
-                    const child = this.connectionManager.getClient(message.clientId)
-
-                    console.log(typeof child)
-                    child?.send(message.clientMessage, message.channel)
-                })
-            }, "root:send")
-        })
     }
 
     public run() {

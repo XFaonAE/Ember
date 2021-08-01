@@ -41,7 +41,7 @@ const db: {[index: string]: any} = {
             token: "xfaon-account"
         }
     },
-    online: {}
+    online: []
 }
 
 function logic(server: SocketServer) {
@@ -60,10 +60,7 @@ function logic(server: SocketServer) {
                         token: db.users[msg.user].token
                     })
 
-                    db.online[db.users[msg.user].token] = {
-                        node: server.config.host + ":" + server.config.port,
-                        client: conn.id
-                    }
+                    db.online.push(conn.id)
                 } else {
                     reply({
                         error: "Invalid user info"
@@ -82,21 +79,16 @@ function logic(server: SocketServer) {
                     }
                 }
 
-                db.online[user.user.token] = {
-                    node: server.config.host + ":" + server.config.port,
-                    client: conn.id
-                }
+                db.online.push(conn.id)
 
                 terminal.log("CHAT -> " + user.name + " -> " + msg.msg)
 
-                for (let online in db.online) {
-                    const onlineU = db.online[online]
-
-                    server.connectionManager.sendNetwork(onlineU.node, onlineU.client, {
+                db.online.forEach((co: any) => {
+                    one.connectionManager.getClient(co)?.send({
                         message: msg.msg,
                         user: user.name
-                    },  "chat:send")
-                }
+                    }, "chat:send")
+                })
             }, "chat:send")
         })
 
@@ -105,25 +97,7 @@ function logic(server: SocketServer) {
 }
 
 const one = socket.createServer({
-    port: 1000,
-    accessInfo: {
-        user: "",
-        password: ""
-    },
-    cluster: [
-        {
-            port: 1000,
-            host: "localhost",
-            user: "",
-            password: ""
-        },
-        {
-            port: 1100,
-            host: "localhost",
-            user: "",
-            password: ""
-        }
-    ]
+    port: 1000
 })
 
 one.on("ready", () => {
@@ -132,32 +106,3 @@ one.on("ready", () => {
 
 logic(one)
 one.run()
-
-const two = socket.createServer({
-    port: 1100,
-    accessInfo: {
-        user: "",
-        password: ""
-    },
-    cluster: [
-        {
-            port: 1000,
-            host: "localhost",
-            user: "",
-            password: ""
-        },
-        {
-            port: 1100,
-            host: "localhost",
-            user: "",
-            password: ""
-        }
-    ]
-})
-
-two.on("ready", () => {
-    terminal.log("Socket Server two is ready")
-})
-
-logic(two)
-two.run()
