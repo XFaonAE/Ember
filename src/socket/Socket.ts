@@ -1,12 +1,16 @@
-import Server, {ServerOptions} from "./server/Server";
-import Client, {ClientOptions} from "./client/Client";
+import SocketClient, { ClientOptions } from "./client/SocketClient";
+import SocketServer, { ServerOptions } from "./server/SocketServer";
+
+export interface SocketMessage {
+    [index: string]: any;
+}
 
 export default class Socket {
     public createServer(options: ServerOptions) {
-        return new Server(options)
+        return new SocketServer(options)
     }
 
     public createClient(options: ClientOptions) {
-        return new Client(options)
+        return new SocketClient(options)
     }
 }

@@ -13,6 +13,10 @@ export default class Terminal {
         console.error(chalk.hex("#ff5555")(this.charset.logIcon) + "  " + message)
     }
 
+    public success(message: string) {
+        console.log(chalk.hex("#50ffab")(this.charset.logIcon) + "  " + message)
+    }
+
     public warning(message: string) {
         console.warn(chalk.hex("#ffff55")(this.charset.logIcon) + "  " + message)
     }

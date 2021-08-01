@@ -1,4 +1,5 @@
-import {request as WebSocketRequest, connection as WebSocketConnection, connection} from "websocket"
+import { request as WebSocketRequest, connection as WebSocketConnection } from "websocket"
+import SocketServer from "./SocketServer";
 
 export default class ServerConnection {
     private connectionStatus: "accepted"|"requesting" = "requesting"
@@ -8,6 +9,7 @@ export default class ServerConnection {
     public webSocketConnection: WebSocketConnection|null = null
     public id: string = ""
     public props: {[index: string]: any} = {}
+    public server: SocketServer|null = null
 
     public constructor(webSocketConnectionRequest: WebSocketRequest) {
         this.webSocketConnectionRequest = webSocketConnectionRequest

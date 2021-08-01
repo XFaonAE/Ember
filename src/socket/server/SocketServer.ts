@@ -1,10 +1,11 @@
 import ServerConnection from "./ServerConnection";
 import ConnectionManager from "./ConnectionManager";
 import * as https from "https";
-import http, {IncomingMessage, ServerResponse} from "http";
-import {server as WebSocketServer, request as WebSocketRequest, connection} from "websocket";
+import http, { IncomingMessage, ServerResponse } from "http";
+import { server as WebSocketServer, request as WebSocketRequest, connection } from "websocket";
 import ClientConnection from "../client/ClientConnection";
-import {socket} from "../../Main";
+import { socket } from "../../Main";
+import { SocketMessage } from "../Socket";
 
 export interface ServerOptions {
     port?: number
@@ -29,9 +30,9 @@ const defaultServerOptions: ServerOptions = {
     port: 8080,
     host: "localhost"
 }
-export {defaultServerOptions}
+export { defaultServerOptions }
 
-export default class Server {
+export default class SocketServer {
     public config: ServerOptions
     public connectionManager: ConnectionManager = new ConnectionManager()
 
@@ -67,6 +68,8 @@ export default class Server {
             })
 
             this.on("open", (connection: ServerConnection) => {
+                connection.server = this
+
                 connection.on("accept", () => {
                     const clientId = "id" + Math.random()
                     this.connectionManager.appendClient(clientId, connection)
@@ -81,7 +84,7 @@ export default class Server {
 
     private connectNodes() {
         this.config.cluster?.forEach((node: any) => {
-            const connection = socket.createClient({
+            const client = socket.createClient({
                 port: node.port,
                 host: node.host,
                 root: {
@@ -90,7 +93,20 @@ export default class Server {
                 }
             })
 
-            connection.connect()
+            client.on("open", (connection: ClientConnection) => {
+                connection.on("reply", (reply: any) => {
+                    if (reply.root) {
+                        let nodeId = this.config.host ? this.config.host : defaultServerOptions.host
+                        if (this.config.port) {
+                            nodeId += ":" + this.config.port
+                        }
+
+                        this.connectionManager.appendNode(<string>nodeId, connection)
+                    }
+                }, "root")
+            })
+
+            client.connect()
         })
     }
 
@@ -129,16 +145,38 @@ export default class Server {
     }
 
     public rootControlCheck() {
+        const verify = (connection: ServerConnection, valid: () => any) => {
+            if (!connection.props.root) {
+                connection.close()
+                return
+            }
+
+            valid()
+        }
+
         this.on("open", (connection: ServerConnection) => {
             connection.on("message", (message: any, reply: CallableFunction) => {
                 if (message.user == this.config.accessInfo?.user && message.password == this.config.accessInfo?.password) {
                     connection.props.root = true
-
                     reply({
-                        msg: "success! ROOT GIVEN AT " + new Date() + " /o\\"
+                        root: true
                     })
+                } else {
+                    reply({
+                        root: false
+                    })
+                    connection.close()
                 }
             }, "root")
+
+            connection.on("message", (message: SocketMessage) => {
+                verify(connection, () => {
+                    const child = this.connectionManager.getClient(message.clientId)
+
+                    console.log(typeof child)
+                    child?.send(message.clientMessage, message.channel)
+                })
+            }, "root:send")
         })
     }
 

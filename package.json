@@ -24,11 +24,13 @@
   "homepage": "https://github.com/AxeriDev/Ember#readme",
   "devDependencies": {
     "@types/node": "^16.4.7",
+    "@types/os-utils": "^0.0.1",
     "@types/websocket": "^1.0.4",
     "typescript": "^4.3.5"
   },
   "dependencies": {
     "chalk": "^4.1.1",
+    "os-utils": "^0.0.14",
     "websocket": "^1.0.34"
   }
 }

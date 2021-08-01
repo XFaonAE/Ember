@@ -1,5 +1,6 @@
-import {client as WebSocketClient, connection, connection as WebSocketConnection} from "websocket";
+import { client as WebSocketClient, connection, connection as WebSocketConnection } from "websocket";
 import ClientConnection from "./ClientConnection";
+import { SocketMessage } from "../Socket";
 
 export interface ClientOptions {
     port?: number
@@ -22,7 +23,7 @@ const defaultClientOptions = {
 }
 export {defaultClientOptions}
 
-export default class Client {
+export default class SocketClient {
     private events: any = {error: [], open: []}
 
     public webSocketConnection: WebSocketClient
@@ -51,14 +52,12 @@ export default class Client {
         })
 
         this.on("open", (connection: ClientConnection) => {
+            connection.client = this
+
             if (this.config.root) {
                 connection.send({
                     user: this.config.root.user,
                     password: this.config.root.password
-                }, "root")
-
-                connection.on("reply", (message: any) => {
-                    console.log(message)
                 }, "root")
             }
         })

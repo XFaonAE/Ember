@@ -1,9 +1,11 @@
-import {connection as WebSocketConnection} from "websocket";
+import { connection as WebSocketConnection } from "websocket";
+import SocketClient from "./SocketClient";
 
 export default class ClientConnection {
-    private events: any = {message: [], reply: []}
+    public events: any = {message: [], reply: []}
 
     public webSocketConnection: WebSocketConnection
+    public client: SocketClient|null = null
 
     public constructor(webSocketConnection: WebSocketConnection) {
         this.webSocketConnection = webSocketConnection
