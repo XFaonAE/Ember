@@ -1,72 +1,51 @@
-import { client as WebSocketClient, connection, connection as WebSocketConnection } from "websocket";
+import { client, connection } from "websocket";
 import ClientConnection from "./ClientConnection";
-import { SocketMessage } from "../Socket";
 
 export interface ClientOptions {
-    port?: number
-    host?: string
-    ssl?: boolean
-    root?: {
-        user: string
-        password: string
-    }
+    port: number;
+    host?: string;
+    ssl?: boolean;
 }
-
-const defaultClientOptions = {
-    port: 8080,
-    host: "localhost",
-    ssl: false,
-    root: {
-        user: "",
-        password: ""
-    }
-}
-export {defaultClientOptions}
 
 export default class SocketClient {
-    private events: any = {error: [], open: []}
-
-    public webSocketConnection: WebSocketClient
-    public config: ClientOptions
+    public config: ClientOptions;
+    public socket: client | null = null;
+    public events: { [index: string]: any } = { open: [], error: [] };
 
     public constructor(options: ClientOptions) {
-        this.config = {...defaultClientOptions, ...options}
-        this.webSocketConnection = new WebSocketClient()
+        const defaultOptions: ClientOptions = {
+            port: 1000,
+            host: "localhost",
+            ssl: false
+        };
+
+        this.config = { ...defaultOptions, ...options };
+        this.createSocket();
     }
 
-    public connect() {
-        const protocol = this.config.ssl ? "wss://" : "ws://"
-        const port = this.config.port ? ":" + this.config.port : ""
+    private createSocket() {
+        this.socket = new client();
 
-        this.webSocketConnection.connect(protocol + this.config.host + port)
+        this.socket.on("connect", (connection: connection) => {
+            const clientConnection = new ClientConnection(connection);
 
-        this.webSocketConnection.on("connect", (connection: WebSocketConnection) => {
-            const connPublic = new ClientConnection(connection)
-            this.events.open.forEach((event: any) => event(connPublic))
-        })
-
-        this.webSocketConnection.on("connectFailed", () => {
-            this.events.error.forEach((event: any) => {
-                event()
-            })
-        })
-
-        this.on("open", (connection: ClientConnection) => {
-            connection.client = this
-
-            if (this.config.root) {
-                connection.send({
-                    user: this.config.root.user,
-                    password: this.config.root.password
-                }, "root")
-            }
+            this.events.open.forEach((event: any) => {
+                event(clientConnection);
+            });
         })
     }
 
-    public on(event: "error", callback: (error: string) => any): void
-    public on(event: "open", callback: (connection: ClientConnection) => any): void
+    public run() {
+        this.socket?.connect((this.config.ssl ? "wss://" : "ws://") + this.config.host + (this.config.port ? ":" + this.config.port : ""));
+    }
+
+    public on(event: "open", callback: (connection: ClientConnection) => any): void;
 
     public on(event: any, callback: any) {
-        this.events[event].push(callback)
+        this.events[event].push(callback);
+    }
+
+    public send(message: any, channel: string) {
+
     }
 }

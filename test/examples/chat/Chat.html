@@ -28,7 +28,9 @@
             })
 
             onMsg((msg) => {
-                console.log(msg.message.user + " -> " + msg.message.message)
+                if (msg.channel === "chat:get") {
+                    $(".window").append(`<p>${msg.message.user}: ${msg.message.message}</p>`)
+                }
             })
         }
     </script>

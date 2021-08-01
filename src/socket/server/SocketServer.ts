@@ -1,128 +1,104 @@
-import ServerConnection from "./ServerConnection";
-import ConnectionManager from "./ConnectionManager";
 import * as https from "https";
-import http, { IncomingMessage, ServerResponse } from "http";
-import { server as WebSocketServer, request as WebSocketRequest, connection } from "websocket";
-import ClientConnection from "../client/ClientConnection";
-import { socket } from "../../Main";
-import { SocketMessage } from "../Socket";
+import * as http from "http";
+import { server, request as WebSocketRequest } from "websocket";
+import ServerConnection from "./ServerConnection";
+import NodeHelper from "../NodeHelper";
+
+export interface ServerNode {
+    port: number;
+    host?: string;
+    auth?: {
+        user: string;
+        password: string;
+    };
+}
 
 export interface ServerOptions {
-    port?: number
-    host?: string
-    accessInfo?: {
-        user: string
-        password: string
-    }
+    port: number;
+    host?: string;
+    nodes: ServerNode[];
+    auth?: {
+        user: string;
+        password: string;
+    };
     ssl?: {
-        key: string
-        certificate: string
-    }
-    cluster?: Array<{
-        port: number
-        host: string
-        user?: string
-        password?: string
-    }>
+        key: string;
+        certificate: string;
+    };
 }
-
-const defaultServerOptions: ServerOptions = {
-    port: 8080,
-    host: "localhost"
-}
-export { defaultServerOptions }
 
 export default class SocketServer {
-    public config: ServerOptions
-    public connectionManager: ConnectionManager = new ConnectionManager()
-
-    private events: any = {error: [], open: [], ready: []}
-    private httpServer: https.Server|http.Server|null = null
-    private webSocketServer: WebSocketServer|null = null
+    public config: ServerOptions;
+    public httpServer: http.Server | https.Server | null = null;
+    public socket: server | null = null;
+    public connections: ServerConnection[] = [];
+    public events: { [index: string]: any[] } = { open: [], error: [], run: [] };
+    public nodeHelper = new NodeHelper();
 
     public constructor(options: ServerOptions) {
-        this.config = {...defaultServerOptions, ...options}
+        const defaultOptions: ServerOptions = {
+            port: 1000,
+            host: "localhost",
+            nodes: [],
+            auth: {
+                user: "",
+                password: ""
+            }
+        };
 
-        this.attachHttp()
-        this.createSocket()
+        this.config = { ...defaultOptions, ...options };
+
+        this.createHttpServer();
+        this.createSocket();
+    }
+
+    private createHttpServer() {
+        if (this.config.ssl) {
+            this.httpServer = https.createServer();
+            return;
+        }
+
+        this.httpServer = http.createServer();
     }
 
     private createSocket() {
         if (this.httpServer) {
-            this.webSocketServer = new WebSocketServer({
-                autoAcceptConnections: false,
-                httpServer: this.httpServer
-            })
+            this.socket = new server({
+                httpServer: this.httpServer,
+                autoAcceptConnections: false
+            });
 
-            this.webSocketServer.on("request", (request: WebSocketRequest) => {
-                const connection = new ServerConnection(request)
-
-                this.events.open.forEach((event: any) => {
-                    event(connection)
-                })
-            })
-
-            this.on("open", (connection: ServerConnection) => {
-                connection.server = this
-
-                connection.on("accept", () => {
-                    const clientId = "id" + Math.random()
-                    this.connectionManager.appendClient(clientId, connection)
-
-                    connection.on("close", () => {
-                        this.connectionManager.removeClient(clientId)
-                    })
-                })
-            })
+            this.handleSocket();
         }
     }
 
-    private attachHttp() {
-        const httpRequest = (request: IncomingMessage, response: ServerResponse) => {
-            response.writeHead(200)
-            response.write(`
-                <!doctype html>
-                <html lang="en">
-                <head>
-                    <title>:( Error</title>    
-                    <style>
-                        * {
-                            font-family: sans-serif;
-                            font-weight: lighter;
-                            background: rgb(32, 32, 32);
-                            color: #fff;
-                        }
-                    </style>    
-                </head>
-                <body>
-                    <h1 style="color: #ff5555;">:( Error</h1>
-                    <p>This HTTP server was meant for the WebSocket server, not you!</p>
-                </body>
-                </html>
-            `)
+    private handleSocket() {
+        const socket = this.socket!;
 
-            response.end()
-        }
+        this.on("run", () => {
+            this.nodeHelper.connect(this.config.nodes);
+        });
 
-        if (this.config.ssl) {
-            this.httpServer = https.createServer(httpRequest)
-        } else {
-            this.httpServer = http.createServer(httpRequest)
-        }
+        socket.on("request", (request: WebSocketRequest) => {
+            const connection = new ServerConnection(request);
+            this.events.open.forEach((event: any) => {
+                event(connection);
+            });
+        });
     }
 
     public run() {
-        this.httpServer?.listen(this.config.port, this.config.host)
-        this.events.ready.forEach((event: any) => {
-            event()
-        })
+        this.httpServer?.listen(this.config.port, this.config.host);
+        this.events.run.forEach((event: any) => {
+            event();
+        });
     }
 
-    public on(event: "error", callback: (error: string) => any): void
-    public on(event: "open", callback: (connection: ServerConnection) => any): void
-    public on(event: "ready", callback: () => any): void
+    public on(event: "open", callback: (connection: ServerConnection) => any): void;
+    public on(event: "error", callback: (error: string) => any): void;
+    public on(event: "run", callback: () => any): void;
 
     public on(event: any, callback: any) {
-        this.events[event].push(callback)
+        this.events[event]?.push(callback);
     }
 }
