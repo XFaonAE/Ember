@@ -5,7 +5,7 @@ import ServerConnection from "./ServerConnection";
 import NodeHelper from "../NodeHelper";
 
 export interface ServerNode {
-    port: number;
+    port: number | null;
     host?: string;
     logStats?: boolean;
     auth?: {
