@@ -2,7 +2,7 @@ import { client, connection } from "websocket";
 import ClientConnection from "./ClientConnection";
 
 export interface ClientOptions {
-    port: number;
+    port: number | null;
     host?: string;
     ssl?: boolean;
 }
