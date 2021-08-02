@@ -2,11 +2,11 @@
   "name": "axeri-ember",
   "version": "0.0.1",
   "description": "Ember Framework",
-  "main": "./compiled/src/Main.js",
+  "main": "./src/Main.js",
   "scripts": {
     "postinstall": "npm install typescript && npx tsc && npm uninstall typescript",
     "dev": "tsc --watch",
-    "test": "node ./compiled/test/Test.js"
+    "test": "node ./test/Test.js"
   },
   "repository": {
     "type": "git",
