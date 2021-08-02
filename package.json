@@ -6,7 +6,7 @@
   "scripts": {
     "postinstall": "npm install typescript && npx tsc && npm uninstall typescript",
     "dev": "tsc --watch",
-    "test": "node ./compiled/test/Test.js"
+    "test": "node ./test/Test.js"
   },
   "repository": {
     "type": "git",
