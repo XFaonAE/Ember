@@ -1,0 +1,39 @@
+// @font-face {
+//     font-family: "SegoeUI Variable";
+//     src: url("./vendors/SegoeUI-VF.ttf")
+// }
+
+* {
+    box-sizing: border-box;
+    outline: none;
+}
+
+._scheme_dark {
+    --layer1: rgb(32, 32, 32);
+    --layer2: rgb(43, 43, 43);
+    --layer3: rgb(55, 55, 55);
+    --text: rgb(255, 255, 255);
+    --accent: rgb(116, 189, 221);
+    --destructive: rgb(255, 100, 100);
+    --warning: rgb(255, 255, 100);
+}
+
+._scheme_light {
+    --layer1: rgb(220, 220, 220);
+    --layer2: rgb(240, 240, 240);
+    --layer3: rgb(255, 255, 255);
+    --text: rgb(0, 0, 0);
+    --accent: rgb(116, 189, 221);
+    --destructive: rgb(255, 100, 100);
+    --warning: rgb(255, 255, 100);
+}
+
+@layer1: var(--layer1);
+@layer2: var(--layer2);
+@layer3: var(--layer3);
+@text: var(--text);
+@accent: var(--accent);
+@destructive: var(--destructive);
+@warning: var(--warning);
+
+@mainFont: "SegoeUI Variable", sans-serif;

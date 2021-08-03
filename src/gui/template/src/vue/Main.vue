@@ -1,16 +1,22 @@
 <template>
-    <p>Hello</p>
-    <RouterView />
+    <div class="_root">
+        <TitleBar />
+    </div>
 </template>
 
-<script>
-import { Vue } from "vue-class-component";
+<script lang="ts">
+import { Options, Vue } from "vue-class-component";
+import TitleBar from "./vendor/axeridev/flux/TitleBar.vue";
 
+@Options({
+    components: {
+        TitleBar
+    }
+})
 export default class Main extends Vue {
-
 }
 </script>
 
-<style scoped>
-
+<style lang="less" scoped>
+    
 </style>
