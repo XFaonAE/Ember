@@ -7,6 +7,9 @@ export interface AppOptions {
         vue?: boolean;
         electron?: boolean;
     };
+    electron?: {
+        saveRestartTime?: number
+    };
 }
 
 export default class Gui {
@@ -20,6 +23,9 @@ export default class Gui {
                 skip: {
                     vue: false,
                     electron: false
+                },
+                electron: {
+                    saveRestartTime: 1000
                 }
             };
 

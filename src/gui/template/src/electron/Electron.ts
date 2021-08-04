@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, ipcMain } from "electron";
 import path from "path";
 import electronIsDev from "electron-is-dev";
 
@@ -11,8 +11,17 @@ app.on("ready", () => {
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
-            webviewTag: true
+            webviewTag: true,
+            enableRemoteModule: true
         }
+    });
+
+    ipcMain.on("electron:close", () => {
+        app.exit();
+    });
+
+    ipcMain.on("electron:size", () => {
+        
     });
 
     window.on("close", () => {

@@ -3,12 +3,23 @@
 //     src: url("./vendors/SegoeUI-VF.ttf")
 // }
 
+@import url("./fabric/fabric.min.css");
+
 * {
     box-sizing: border-box;
     outline: none;
 }
 
+body {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    background: @layer1;
+}
+
 ._scheme_dark {
+    --layer0: rgb(27, 27, 27);
     --layer1: rgb(32, 32, 32);
     --layer2: rgb(43, 43, 43);
     --layer3: rgb(55, 55, 55);
@@ -19,6 +30,7 @@
 }
 
 ._scheme_light {
+    --layer0: rgb(210, 210, 210);
     --layer1: rgb(220, 220, 220);
     --layer2: rgb(240, 240, 240);
     --layer3: rgb(255, 255, 255);
@@ -28,6 +40,18 @@
     --warning: rgb(255, 255, 100);
 }
 
+._scheme_contrast {
+    --layer0: #000;
+    --layer1: #000;
+    --layer2: #000;
+    --layer3: #000;
+    --text: #fff;
+    --accent: rgb(116, 189, 221);
+    --destructive: rgb(255, 100, 100);
+    --warning: rgb(255, 255, 100);
+}
+
+@layer0: var(--layer0);
 @layer1: var(--layer1);
 @layer2: var(--layer2);
 @layer3: var(--layer3);

@@ -1,6 +1,8 @@
-import { exec } from "child_process";
+import { ChildProcess, exec, spawn } from "child_process";
+import path from "path";
 import { terminal } from "../Main";
 import { AppOptions } from "./Gui";
+import chokidar from "chokidar";
 
 export default class Runner {
     public runVue(config: AppOptions, callback: (host: string) => any) {
@@ -38,31 +40,81 @@ export default class Runner {
         }
 
         terminal.log("Starting ElectronJS development app...");
-        let service = exec("npx electron . http://" + host);
+
         let ready = false;
+        const electronMeta = exec("node " + path.join(process.cwd(), "./src/electron/GetExe.js"));
 
-        const write = (data: string) => {
-            switch (data) {
-                case "dev-host-ready":
-                    if (!ready) {
-                        terminal.log("ElectronJS development app is ready");
-                        ready = true;
-                        callback();
-                    }
-                    break;
+        electronMeta.stdout?.on("data", (data: string) => {
+            const electronExe = data.replace(new RegExp(/\n/, "g"), "");
+            let service: null | ChildProcess = null;
+            let restarting = false;
 
-                case "dev-host-failed":
-                    terminal.error("ElectronJS development app failed");
-                    callback();
-                    break;
-
-                case "app-closed":
-                    terminal.log("ElectronJS was closed, stopping development server");
-                    process.exit(0);
+            const restart = () => {
+                service?.kill();
+                start();
             }
-        }
 
-        service.stdout?.on("data", (data: string) => write(data));
-        service.stderr?.on("data", (data: string) => write(data));
+            const watchRestart = () => {
+                const electronDir = chokidar.watch(path.resolve(process.cwd(), "./src/electron/"));
+
+                let wait: NodeJS.Timer;
+                let initTrue = false;
+
+                const queue = () => {
+                    if (!initTrue) {
+                        initTrue = true;
+                        wait = setTimeout(() => {
+                            restart();
+                        }, config.electron?.saveRestartTime);
+                        
+                        wait?.refresh;
+                        return;
+                    }
+
+                    wait?.refresh();
+                }
+
+                electronDir.on("change", () => queue());
+            }
+
+            const write = (data: string) => {
+                switch (data) {
+                    case "dev-host-ready":
+                        if (!ready) {
+                            terminal.log("ElectronJS development app is ready");
+                            ready = true;
+
+                            watchRestart();
+                            callback();
+                        }
+                        break;
+
+                    case "dev-host-failed":
+                        if (!ready) {
+                            ready = true;
+                            terminal.error("ElectronJS development app failed");
+
+                            watchRestart();
+                            callback();
+                        }
+                        break;
+
+                    case "app-closed":
+                        if (!restarting) {
+                            terminal.log("ElectronJS was closed, stopping development server");
+                            process.exit(0);
+                        }
+                }
+            }
+
+            const start = () => {
+                service = spawn(electronExe, [ ".", "http://" + host ]);
+
+                service.stdout?.on("data", (data: any) => write(data.toString()));
+                service.stderr?.on("data", (data: any) => write(data.toString()));
+            }
+
+            start();
+        });
     }
 }
