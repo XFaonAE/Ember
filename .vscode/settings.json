@@ -1,5 +1,7 @@
 {
     "files.exclude": {
+        "!**/shims-vue.d.ts": true,
+        "!shims-vue.d.ts": true,
         "*.js": true,
         "**/*.d.ts": true,
         "**/*.js": true,

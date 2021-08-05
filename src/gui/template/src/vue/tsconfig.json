@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+      "target": "esNext",
+      "module": "esNext",
+      "strict": true,
+      "jsx": "preserve",
+      "moduleResolution": "node",
+      "experimentalDecorators": true
+    }
+  }

@@ -30,4 +30,8 @@ export default class Terminal {
     public bgHex(hex: string, text: string) {
         return chalk.bgHex(hex)(text);
     }
+
+    public row(key: string, value: string) {
+        console.log(this.hex("#74bddd", key) + "  -  " + value)
+    }
 }

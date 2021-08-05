@@ -106,10 +106,14 @@ export default class Command {
         callback(args, flags);
     }
 
-    public setInputMode(mode: "npm-bin") {
-        const args = process.argv.splice(2);
-        const parsed = this.parse(args.join(" "))!;
-        
-        this.run(parsed.trigger, parsed.args, parsed.flags);
+    public setInputMode(mode: "npm-bin", parserOptions: ParseOptions = {}) {
+        switch (mode) {
+            case "npm-bin":
+                const args = process.argv.splice(2);
+                const parsed = this.parse(args.join(" "))!;
+                
+                this.run(parsed.trigger, parsed.args, parsed.flags);
+                break;
+        }
     }
 }

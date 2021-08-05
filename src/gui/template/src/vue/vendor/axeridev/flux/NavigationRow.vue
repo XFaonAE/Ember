@@ -2,7 +2,7 @@
     <div class="root">
         <RouterLink to="/">Home</RouterLink>
 
-        <RouterLink to="/tests">Tests</RouterLink>
+        <RouterLink to="/text-editor">Text Editor</RouterLink>
 
         <RouterLink to="/github">GitHub</RouterLink>
     </div>

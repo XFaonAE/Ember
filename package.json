@@ -3,6 +3,9 @@
   "version": "0.0.4",
   "description": "Ember Framework",
   "main": "./src/Main.js",
+  "bin": {
+    "ember": "./bin/Bin.js"
+  },
   "scripts": {
     "dev": "tsc --watch",
     "test": "node ./test/Test.js"
