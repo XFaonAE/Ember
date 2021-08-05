@@ -46,11 +46,7 @@ export default class Command {
         return result;
     }
 
-    public parse(fullCommand: string, options: ParseOptions = {}): { trigger: string, args: string[], flags: { [index: string]: any } } | undefined {
-        if (fullCommand.length == 0) {
-            throw new Error("Command must be larger than 0 characters");
-        }
-        
+    public parse(fullCommand: string, options: ParseOptions = {}): { trigger: string, args: string[], flags: { [index: string]: any } } | undefined {    
         const defaultOptions: ParseOptions = {
             flag: {
                 default: true
@@ -108,5 +104,12 @@ export default class Command {
         const callback = command?.callback ? command?.callback : () => {};
 
         callback(args, flags);
+    }
+
+    public setInputMode(mode: "npm-bin") {
+        const args = process.argv.splice(2);
+        const parsed = this.parse(args.join(" "))!;
+        
+        this.run(parsed.trigger, parsed.args, parsed.flags);
     }
 }

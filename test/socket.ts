@@ -1,4 +1,4 @@
-import { command } from "../src/Main";
+import { command, terminal } from "../src/Main";
 
 command.on("run", (args: string[], flags: any) => {
     console.log("[ TEST ] Command executed");
@@ -10,8 +10,10 @@ command.on("run", (args: string[], flags: any) => {
     ]
 });
 
-const commandData = command.parse("test Hello-World! --flag=value --flagNext=next-flag --flag2 -flag3");
+command.on("run", (args: string[], flags: any) => {
+    terminal.log("Help: ");
+}, {
+    triggers: [ "", "help" ]
+});
 
-if (commandData) {
-    command.run(commandData.trigger, commandData.args, commandData.flags);
-}
+command.setInputMode("npm-bin");
