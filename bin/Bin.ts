@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { command, terminal } from "../src/Main";
+import Gui from "./gui/Gui";
 
 const row = (key: string, value: string) => {
     terminal.row(key, value);
@@ -19,5 +20,7 @@ command.on("run", (args: string[]) => {
             break;
     }
 }, { triggers: [ "help", "" ] });
+
+new Gui();
 
 command.setInputMode("npm-bin");

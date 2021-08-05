@@ -92,7 +92,7 @@ export default class Command {
                 return;
             }
 
-            result.args.push(chunk);
+            result.args.push(chunk.toLowerCase());
         });
 
         return result;
