@@ -1,8 +1,10 @@
 <template>
     <div class="_root">
         <TitleBar />
-        <NavigationRow />
+        <MenuBar />
         <Switch />
+
+        <video></video>
     </div>
 </template>
 
@@ -11,14 +13,14 @@ import { Options, Vue } from "vue-class-component";
 // @ts-ignore
 import TitleBar from "./vendor/axeridev/flux/TitleBar.vue";
 // @ts-ignore
-import NavigationRow from "./vendor/axeridev/flux/NavigationRow.vue";
+import MenuBar from "./vendor/axeridev/flux/MenuBar.vue";
 // @ts-ignore 
 import Switch from "./vendor/axeridev/flux/Switch.vue";
 
 @Options({
     components: {
         TitleBar,
-        NavigationRow,
+        MenuBar,
         Switch
     }
 })

@@ -9,15 +9,19 @@
         </div>
 
         <div class="buttons">
-            <button>
+            <button @click="minimizeWindow">
                 <i class="ms-Icon ms-Icon--ChromeMinimize"></i>
             </button>
 
-            <button>
+            <button @click="sizeWindow" v-if="windowMaximized">
                 <i class="ms-Icon ms-Icon--ChromeRestore"></i>
             </button>
 
-            <button>
+            <button @click="sizeWindow" v-if="!windowMaximized">
+                <i class="ms-Icon ms-Icon--Checkbox"></i>
+            </button>
+
+            <button @click="closeWindow" >
                 <i class="ms-Icon ms-Icon--ChromeClose"></i>
             </button>
         </div>
@@ -26,9 +30,29 @@
 
 <script lang="ts">
 import { Vue } from "vue-class-component";
+const { ipcRenderer } = window.require("electron");
 
 export default class TitleBar extends Vue {
+    public windowMaximized: boolean = false;
 
+    public created() {
+        ipcRenderer.on("electron:isMaximized", (event: any, answer: any) => {
+            this.windowMaximized = answer;
+        });
+    }
+
+    public closeWindow() {
+        ipcRenderer.send("electron:close");
+    }
+
+    public minimizeWindow() {
+        ipcRenderer.send("electron:minimize");
+    }
+
+    public sizeWindow() {
+        ipcRenderer.send("electron:size");
+        ipcRenderer.send("electron:isMaximized");
+    }
 }
 </script>
 
