@@ -1,12 +1,16 @@
-import { command, terminal } from "../../src/Main";
+import { command, macros, terminal } from "../../src/Main";
 
 export default class Gui {
     public constructor() {
         command.on("run", (args: string[], flags: any) => {
-            try {
-                eval(`this.${args[0]}(${args}, ${flags});`);
-            } catch (error: any) {
-                terminal.error(`The command "gui ${args[0]}" does not exist, use "help gui" to get a list of available commands`)
+            switch (args[0]) {
+                case "dev":
+                    this.dev(args, flags);
+                    break;
+
+                default:
+                    macros.run("bin:Bin UnknownCommand", "gui");
+                    break;
             }
         }, { triggers: [ "gui" ] });
     }

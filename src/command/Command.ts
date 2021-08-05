@@ -1,6 +1,7 @@
 export interface ParseOptions {
     flag?: {
         default?: any;
+        parseBoolean?: boolean;
     }
 }
 
@@ -49,7 +50,8 @@ export default class Command {
     public parse(fullCommand: string, options: ParseOptions = {}): { trigger: string, args: string[], flags: { [index: string]: any } } | undefined {    
         const defaultOptions: ParseOptions = {
             flag: {
-                default: true
+                default: true,
+                parseBoolean: true
             }
         }
 
@@ -71,9 +73,22 @@ export default class Command {
         chunks.forEach((chunk: string) => {
             if (getType(chunk) == "flag-full") {
                 if (/--([^"]+)=([^"]+)/.test(chunk)) {
+                    let value: any;
                     const flag = /--([^"]+)=([^"]+)/.exec(chunk);
+
                     if (flag) {
-                        result.flags[flag[1]] = flag[2];
+                        console.log(config)
+                        if (config.flag?.parseBoolean) {
+                            if (flag[2].toLowerCase() == "true") {
+                                value = true;
+                            } else if (flag[2].toLowerCase() == "false") {
+                                value = false;
+                            }
+                        } else {
+                            value = flag[2];
+                        }
+
+                        result.flags[flag[1]] = value;
                     }
                 } else if (/--([^"]+)/) {
                     const flag = /--([^"]+)/.exec(chunk);
@@ -110,7 +125,7 @@ export default class Command {
         switch (mode) {
             case "npm-bin":
                 const args = process.argv.splice(2);
-                const parsed = this.parse(args.join(" "))!;
+                const parsed = this.parse(args.join(" "), parserOptions)!;
                 
                 this.run(parsed.trigger, parsed.args, parsed.flags);
                 break;

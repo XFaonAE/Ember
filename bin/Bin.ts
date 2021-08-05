@@ -1,7 +1,11 @@
 #!/usr/bin/env node
 
-import { command, terminal } from "../src/Main";
+import { command, macros, terminal } from "../src/Main";
 import Gui from "./gui/Gui";
+
+macros.add("bin:Bin UnknownCommand", (bin: string) => {
+    terminal.error(`Unknown command, use "help ${ bin }" to get a list of available commands`);
+});
 
 const row = (key: string, value: string) => {
     terminal.row(key, value);
@@ -23,4 +27,8 @@ command.on("run", (args: string[]) => {
 
 new Gui();
 
-command.setInputMode("npm-bin");
+command.setInputMode("npm-bin", {
+    flag: {
+        parseBoolean: false
+    }
+});
