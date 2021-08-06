@@ -29,7 +29,6 @@ new Gui();
 
 command.setInputMode("process", {
     flag: {
-        parseBoolean: true,
-        default: "yee"
+        parseBoolean: false
     }
 });

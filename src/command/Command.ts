@@ -1,3 +1,5 @@
+import { utils } from "../Main";
+
 export interface ParseOptions {
     flag?: {
         default?: any;
@@ -48,14 +50,15 @@ export default class Command {
     }
 
     public parse(fullCommand: string, options: ParseOptions = {}): { trigger: string, args: string[], flags: { [index: string]: any } } | undefined {    
-        const defaultOptions: ParseOptions = {
+        const config = utils.parseConfig({
             flag: {
                 default: true,
                 parseBoolean: true
             }
-        }
+        } as ParseOptions, options);
 
-        const config = { ...defaultOptions, ...options };
+        console.log(config);
+
         const chunks = fullCommand.split(" ");
         const result: { trigger: string, args: string[], flags: { [ index: string ]: any } } = { trigger: chunks[0], args: [], flags: {} };
 
