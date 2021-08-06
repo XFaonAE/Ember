@@ -1,4 +1,4 @@
-import {ServerNode, ServerOptions} from "./server/SocketServer";
+import { ServerNode, ServerOptions } from "./server/SocketServer";
 import { socket, terminal } from "../Main";
 import ClientConnection from "./client/ClientConnection";
 
@@ -11,70 +11,74 @@ export default class NodeHelper {
         const count = nodes.length;
 
         nodes.forEach((nodeConfig: ServerNode) => {
-            const node = socket.createClient({
-                port: nodeConfig.port,
-                host: nodeConfig.host
-            });
+            const connect = () => {
+                const node = socket.createClient({
+                    port: nodeConfig.port,
+                    host: nodeConfig.host
+                });
 
-            node.on("open", (conn: ClientConnection) => {
-                const next = () => {
-                    if ((count - 1) == index) {
-                        this.connectedAll = true;
-                        callback();
-                        return;
-                    }
-                    index++;
-                }
-
-                conn.send({
-                    user: nodeConfig.auth?.user,
-                    password: nodeConfig.auth?.password
-                }, "nodeAccess");
-
-                conn.on("message", (message: any) => {
-                    if (message.token && nodeConfig.logStats) {
-                        terminal.tag.success("Access granted to node: " + nodeConfig.host + (nodeConfig.port ? ":" + nodeConfig.port : ""));
+                node.on("open", (conn: ClientConnection) => {
+                    const next = () => {
+                        if ((count - 1) == index) {
+                            this.connectedAll = true;
+                            callback();
+                            return;
+                        }
+                        index++;
                     }
 
-                    if (message.token) {
-                        conn.props.id = nodeConfig.host + (nodeConfig.port ? ":" + nodeConfig.port : "");
-                        this.nodes.push(conn);
-                        conn.props.token = message.token;
-                        conn.props.node = true;
-                        next();
-                    }
-                }, "nodeAccess");
+                    conn.send({
+                        user: nodeConfig.auth?.user,
+                        password: nodeConfig.auth?.password
+                    }, "nodeAccess");
 
-                conn.on("message", (message: any) => {
-                    if (message.error) {
-                        let errorMessage = "Undefined error";
-
-                        switch (message.error) {
-                            case 1000:
-                                errorMessage = "Invalid credentials"
-                                break;
+                    conn.on("message", (message: any) => {
+                        if (message.token && nodeConfig.logStats) {
+                            terminal.tag.success("Access granted to node: " + nodeConfig.host + (nodeConfig.port ? ":" + nodeConfig.port : ""));
                         }
 
+                        if (message.token) {
+                            conn.props.id = nodeConfig.host + (nodeConfig.port ? ":" + nodeConfig.port : "");
+                            this.nodes.push(conn);
+                            conn.props.token = message.token;
+                            conn.props.node = true;
+                            next();
+                        }
+                    }, "nodeAccess");
+
+                    conn.on("message", (message: any) => {
+                        if (message.error) {
+                            let errorMessage = "Undefined error";
+
+                            switch (message.error) {
+                                case 1000:
+                                    errorMessage = "Invalid credentials"
+                                    break;
+                            }
+
+                            if (nodeConfig.logStats) {
+                                terminal.tag.error(errorMessage);
+                                terminal.tag.error("The connection to the server has been closed");
+                                terminal.tag.error("Failed to get node control token");
+                            }
+                        }
+                    }, "close");
+                });
+
+                node.on("error", () => {
+                    setTimeout(() => {
                         if (nodeConfig.logStats) {
-                            terminal.tag.error(errorMessage);
-                            terminal.tag.error("The connection to the server has been closed");
-                            terminal.tag.error("Failed to get node control token");
+                            terminal.tag.warning("A node failed to connect, reconnecting. Note this is normal to happen");
+                            terminal.tag.warning("Debug Info: connecting-to = " + nodeConfig.host + (nodeConfig.port ? ":" + nodeConfig.port : "") + " at = " + config.host + (config.port ? ":" + config.port : ""));
                         }
-                    }
-                }, "close");
-            });
+                        connect();
+                    }, 300);
+                });
 
-            node.on("error", () => {
-                setTimeout(() => {
-                    if (nodeConfig.logStats) {
-                        terminal.tag.warning("A node failed to connect, reconnecting. Note this is normal to happen");
-                        terminal.tag.warning("Debug Info: connecting-to = " + nodeConfig.host + (nodeConfig.port ? ":" + nodeConfig.port : "") + " at = " + config.host + (config.port ? ":" + config.port : ""));
-                    }
-                    node.run();
-                }, 300);
-            });
+                node.run();
+            }
 
-            node.run();
+            connect();
         });
     }
 

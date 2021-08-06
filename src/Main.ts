@@ -4,6 +4,7 @@ import System from "./system/System";
 import Gui from "./gui/Gui";
 import Command from "./command/Command";
 import Macros from "./macros/Macros";
+import Utils from "./utils/Utils";
 
 const socket = new Socket();
 export { socket };
@@ -22,3 +23,6 @@ export { command };
 
 const macros = new Macros();
 export { macros };
+
+const utils = new Utils();
+export { utils };

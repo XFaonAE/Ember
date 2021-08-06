@@ -158,7 +158,8 @@ export default class SocketServer {
             });
             
             this.nodeHelper.connect(this.config.nodes, this.config, () => {
-                autoAccept = false;
+                // TODO: Fixed auto accept going down at the wrong time
+                autoAccept = true;
                 this.events.ready.forEach((event: any) => event());
             });
         });

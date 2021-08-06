@@ -121,9 +121,9 @@ export default class Command {
         callback(args, flags);
     }
 
-    public setInputMode(mode: "npm-bin", parserOptions: ParseOptions = {}) {
+    public setInputMode(mode: "process", parserOptions: ParseOptions = {}) {
         switch (mode) {
-            case "npm-bin":
+            case "process":
                 const args = process.argv.splice(2);
                 const parsed = this.parse(args.join(" "), parserOptions)!;
                 

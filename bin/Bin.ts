@@ -27,8 +27,9 @@ command.on("run", (args: string[]) => {
 
 new Gui();
 
-command.setInputMode("npm-bin", {
+command.setInputMode("process", {
     flag: {
-        parseBoolean: false
+        parseBoolean: true,
+        default: "yee"
     }
 });
