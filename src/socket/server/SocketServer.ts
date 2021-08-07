@@ -3,6 +3,7 @@ import * as http from "http";
 import { server, request as WebSocketRequest } from "websocket";
 import ServerConnection from "./ServerConnection";
 import NodeHelper from "../NodeHelper";
+import { utils } from "../../Main";
 
 export interface ServerNode {
     port: number | null;
@@ -16,7 +17,7 @@ export interface ServerNode {
 
 export interface ServerOptions {
     port: number;
-    host?: string;
+    host: string;
     nodes: ServerNode[];
     auth?: {
         user: string;
@@ -49,7 +50,7 @@ export default class SocketServer {
                 password: ""
             }
         };
-        this.config = { ...defaultOptions, ...options };
+        this.config = utils.parseConfig(defaultOptions, options);
 
         this.config.nodes.forEach((nodeConfig: ServerNode) => {
             if (!nodeConfig.auth) {

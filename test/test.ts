@@ -1,14 +1,14 @@
-import { utils } from "../src/Main";
+import { webServer } from "../src/Main";
 
-console.log(utils.parseConfig({
-    prop: "Hello, world",
-    groupYe: {
-        lol: "yee",
-        mm: "e"
-    }
-}, {
-    prop: "new",
-    groupYe: {
-        
-    }
-}));
+const server = webServer.create({
+    port: 8080,
+    host: "localhost"
+});
+
+server.on("get", "/", (end: any) => {
+    
+    
+    end();
+});
+
+server.run();

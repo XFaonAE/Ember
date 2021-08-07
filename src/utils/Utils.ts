@@ -5,7 +5,7 @@ export default class Utils {
                 if (typeof defaults[defaultProp] == "object") {
                     parse(defaults[defaultProp], replacer[defaultProp]);
                 } else {
-                    if (typeof replacer[defaultProp] != "undefined") {
+                    if (replacer !== undefined && replacer.hasOwnProperty(defaultProp)) {
                         defaults[defaultProp] = replacer[defaultProp]
                     } 
                 }

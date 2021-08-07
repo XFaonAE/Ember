@@ -7,10 +7,12 @@ app.on("ready", () => {
         width: 1500,
         height: 800,
         frame: false,
+        backgroundColor: "transparent",
+        transparent: true,
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
-            webviewTag: true
+            webviewTag: true 
         }
     });
 

@@ -5,6 +5,7 @@ import Gui from "./gui/Gui";
 import Command from "./command/Command";
 import Macros from "./macros/Macros";
 import Utils from "./utils/Utils";
+import WebServer from "./webServer/WebServer";
 
 const socket = new Socket();
 export { socket };
@@ -26,3 +27,6 @@ export { macros };
 
 const utils = new Utils();
 export { utils };
+
+const webServer = new WebServer();
+export { webServer };
