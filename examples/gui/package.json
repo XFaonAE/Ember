@@ -1,9 +1,9 @@
 {
-  "name": "example",
+  "name": "unnamed",
   "description": "",
   "version": "0.0.1",
   "keywords": [
-    "Example"
+    "AxeriEmber"
   ],
   "dependencies": {
     "core-js": "^3.6.5",

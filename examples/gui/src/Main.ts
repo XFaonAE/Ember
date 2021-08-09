@@ -1,3 +1,3 @@
-import { gui } from "../../../src/Main";
+import { gui } from "axeri-ember";
 
 const app = gui.create();

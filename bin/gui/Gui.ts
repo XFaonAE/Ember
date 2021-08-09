@@ -2,7 +2,6 @@ import { terminal } from "../../src/Main";
 import fs from "fs-extra";
 import path from "path";
 import { spawn } from "child_process";
-import chalk from "chalk";
 
 export default class Gui {
     public dev(args: string[], flags: any) {
@@ -81,6 +80,17 @@ export default class Gui {
                 fs.writeFileSync(path.join(process.cwd(), "./package.json"), JSON.stringify(projectResource.package, null, 2));
             } else {
                 terminal.warning("Skipping task for writing new package");
+            }
+
+            if (flags.updateGuiImport !== false) {
+                terminal.log("Updating module import");
+                let mainFile = fs.readFileSync(path.join(process.cwd(), "./src/Main.ts"), "utf8");
+                mainFile = mainFile.replace(new RegExp("import { gui } from \"../../../Main\";", "g"), 
+                    "import { gui } from \"axeri-ember\";");
+
+                fs.writeFileSync(path.join(process.cwd(), "./src/Main.ts"), mainFile);
+            } else {
+                terminal.warning("Skipping task for updating module import");
             }
 
             terminal.success("Project initialization finished");
