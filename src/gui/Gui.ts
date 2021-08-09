@@ -1,6 +1,5 @@
 import { utils } from "../Main";
 import Runner from "./Runner";
-
 export interface AppOptions {
     port?: number;
     skip?: {

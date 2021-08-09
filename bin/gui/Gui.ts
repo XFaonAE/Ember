@@ -6,18 +6,23 @@ import { exec, spawn } from "child_process";
 export default class Gui {
     public dev(args: string[], flags: any) {
         if (fs.existsSync(path.join(process.cwd(), "./src/Main.ts"))) {
-            const devServer = spawn("node", [ "./src/Main" ], {
-                cwd: process.cwd(),
-                shell: true,
-                stdio: "inherit"
-            });
+            if (fs.existsSync(path.join(process.cwd(), "./src/Main.js"))) {
+                const devServer = spawn("node", [ "./src/Main" ], {
+                    cwd: process.cwd(),
+                    shell: true,
+                    stdio: "inherit"
+                });
 
-            const write = (data: string) => {
-                process.stdout.write(data);
+                const write = (data: string) => {
+                    process.stdout.write(data);
+                }
+
+                devServer.stdout?.on("data", (data: string) => write(data));
+                devServer.stderr?.on("data", (data: string) => write(data));
+                return;
             }
 
-            devServer.stdout?.on("data", (data: string) => write(data));
-            devServer.stderr?.on("data", (data: string) => write(data));
+            terminal.error("The entry script has not been compiled");
             return;
         }
 
@@ -138,7 +143,7 @@ export default class Gui {
                     const tsJs = exec("npx tsc");
                     let ready = false;
 
-                    const writeTsJs = (data: string) {
+                    const writeTsJs = (data: string) => {
                         if (!ready) {
                             ready = true;
                             done();

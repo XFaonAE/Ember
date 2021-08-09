@@ -4,7 +4,8 @@
   "description": "Ember Framework",
   "main": "./src/Main.js",
   "bin": {
-    "ember": "./bin/Bin.js"
+    "ember": "./bin/Bin.js",
+    "ember-alt": "./bin/Bin.js"
   },
   "scripts": {
     "dev": "tsc --watch",

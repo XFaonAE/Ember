@@ -43,7 +43,6 @@ export default class Runner {
 
         let ready = false;
         const electronMeta = exec("node " + path.join(process.cwd(), "./src/electron/GetExe.js"));
-
         electronMeta.stdout?.on("data", (data: string) => {
             const electronExe = data.replace(new RegExp(/\n/, "g"), "");
             let service: null | ChildProcess = null;
@@ -112,7 +111,7 @@ export default class Runner {
             }
 
             const start = () => {
-                service = spawn(electronExe, [ ".", "http://" + host, "--no-sandbox" ], {
+                service = spawn(electronExe, [ ".", "http://" + host ], {
                     cwd: process.cwd()
                 });
 
