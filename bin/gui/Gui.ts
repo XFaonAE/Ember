@@ -67,7 +67,13 @@ export default class Gui {
             projectResource.package.dependencies = projectResource.templateProject.package.dependencies;
             projectResource.package.devDependencies = projectResource.templateProject.package.devDependencies;
             projectResource.package.main = projectResource.templateProject.package.main;
-            projectResource.package.dependencies["axeri-ember"] = "^0.0.7"
+            projectResource.package.dependencies["axeri-ember"] = "^0.0.7";
+            let mainFile = fs.readFileSync(path.join(process.cwd(), "./src/Main.ts"), "utf8");
+            let vueFile = fs.readFileSync(path.join(process.cwd(), "./src/vue/Vue.ts"), "utf8");
+
+            if (answers["Install Flux UI components"].toLowerCase() == "yes") {
+                projectResource.package.dependencies["axeri-flux-ui"] = "^0.0.1";
+            }
 
             if (flags.copyTemplate !== false) {
                 terminal.log("Copying template files");
@@ -85,14 +91,27 @@ export default class Gui {
 
             if (flags.updateGuiImport !== false) {
                 terminal.log("Updating module import");
-                let mainFile = fs.readFileSync(path.join(process.cwd(), "./src/Main.ts"), "utf8");
                 mainFile = mainFile.replace(new RegExp("import { gui } from \"../../../Main\";", "g"), 
                     "import { gui } from \"axeri-ember\";");
-
-                fs.writeFileSync(path.join(process.cwd(), "./src/Main.ts"), mainFile);
             } else {
                 terminal.warning("Skipping task for updating module import");
             }
+
+            if (answers["Install Flux UI components"].toLowerCase() == "yes") {
+                terminal.log("Installing FluxUI to VueJS");
+                vueFile = vueFile.replace(new RegExp(/\/\* INJECT FLUX \*\//, "g"), `\napp.use(FluxUi.create());`);
+                vueFile = vueFile.replace(new RegExp(/\/\* INJECT FLUX IMPORT \*\//, "g"), `\nimport FluxUi from "axeri-flux-ui/src/vue/Main";`);
+            } else {
+                terminal.warning("Skipping task for installing FluxUI to VueJS");
+                vueFile = vueFile.replace(new RegExp(/\/\* INJECT FLUX \*\//, "g"), ``);
+                vueFile = vueFile.replace(new RegExp(/\/\* INJECT FLUX IMPORT \*\//, "g"), ``);
+            }
+
+            terminal.log("Re-writing entry script");
+            fs.writeFileSync(path.join(process.cwd(), "./src/Main.ts"), mainFile);
+
+            terminal.log("Re-writing VueJS entry script");
+            fs.writeFileSync(path.join(process.cwd(), "./src/vue/Vue.ts"), vueFile);
 
             terminal.success("Project initialization finished");
             terminal.row("ember gui dev", "Start the application for development");

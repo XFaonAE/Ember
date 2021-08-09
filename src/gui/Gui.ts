@@ -1,4 +1,4 @@
-import { terminal, utils } from "../Main";
+import { utils } from "../Main";
 import Runner from "./Runner";
 
 export interface AppOptions {
