@@ -1,69 +1,43 @@
 <template>
-    <div class="_root">
-        <TitleBar />
-        <NavigationRow />
+    <div class="root">
+        <nav>
+            <router-link to="/">Home</router-link>
+            <router-link to="/about">About</router-link>
+        </nav>
 
-        <RouterView />
-        <GeneralButton @click="toggleError">Open Modal Window</GeneralButton>
+        <hr />
 
-        <ModalWindow>
-            <DescribeContainer title="Test Form Modal" description="Microsoft Corporation is an American multinational technology corporation which produces computer software, consumer electronics, personal computers, and related services">
-                <FormCard title="Text Form" :inputs="[
-                    {
-                        label: 'User Name',
-                        type: 'text',
-                        placeholder: 'Mr. Hacker',
-                        error: errorMsg,
-                        autoFocus: true
-                    },
-                    {
-                        label: 'Password',
-                        type: 'text',
-                        placeholder: 'Your Account Password',
-                        error: errorMsg
-                    }
-                ]"></FormCard>
-            </DescribeContainer>
-
-            <GeneralButton @click="toggleError">Toggle Errors</GeneralButton>
-            <GeneralButton @click="zoomOut">-</GeneralButton>
-            <GeneralButton @click="zoomIn">+</GeneralButton>
-        </ModalWindow>
+        <router-view />
     </div>
 </template>
 
-<script lang="ts">
-    import { Options, Vue } from "vue-class-component";
+<style lang="less">
+* {
+    box-sizing: border-box;
+    color: #000;
+    background: #fff;
+    font-family: sans-serif;
+    font-weight: lighter;
+    font-size: 12px;
+    transition: 100ms;
+}
 
-    @Options({
-    })
-    export default class Main extends Vue {
-        public errorMsg = "";
+nav {
+    a {
+        padding: 6px 10px;
 
-        public created() {
-            document.body.classList.add("_scheme_dark");
-            this.$electron.webFrame.setZoomFactor(1);
-        }
-
-        public toggleError() {
-            if (this.errorMsg) {
-                this.errorMsg = "";
-                return;
-            }
-
-            this.errorMsg = "This is an error message from a variable";
-        }
-
-        public zoomIn() {
-            this.$electron.webFrame.setZoomFactor(this.$electron.webFrame.getZoomFactor() + 0.1);
-        }
-
-        public zoomOut() {
-            this.$electron.webFrame.setZoomFactor(this.$electron.webFrame.getZoomFactor() - 0.1);
+        &:hover {
+            background: rgba(0, 0, 0, 0.05);
         }
     }
-</script>
 
-<style lang="less">
-    @import "./vendor/axeridev/flux/Config";
+    a.router-link-active {
+        color: #74bddd;
+    }
+}
+
+hr {
+    border: none;
+    border-bottom: 1px solid #f1f1f1;
+}
 </style>
