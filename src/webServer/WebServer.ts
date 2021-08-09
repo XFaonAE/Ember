@@ -1,6 +1,7 @@
-import http, { IncomingMessage, ServerResponse } from "http";
+import http, { IncomingMessage as HttpIncomingMessage, ServerResponse as HttpServerResponse } from "http";
 import https from "https";
 import { utils } from "../Main";
+import ServerResponse from "./ServerResponse";
 
 export interface WebServerOptions {
     port: number;
@@ -9,12 +10,17 @@ export interface WebServerOptions {
         key: string;
         certificate: string;
     };
+    notFound?: {
+        get?: boolean;
+        post?: boolean;
+    };
 }
 
 export default class WebServer {
     public config?: WebServerOptions;
     public server?: http.Server | https.Server;
-    public events: { [ index: string ]: any } = { get: [], post: [] };
+    public events: { [ index: string ]: any } = { get: [], post: [], get404: [], post404: [] };
+    public meta: { [ index: string ]: any } = { get: [], post: [] };
 
     public constructor(options?: WebServerOptions) {
         if (options) {
@@ -24,6 +30,10 @@ export default class WebServer {
                 ssl: {
                     key: "",
                     certificate: ""
+                },
+                notFound: {
+                    get: true,
+                    post: true
                 }
             } as WebServerOptions, options);
 
@@ -36,12 +46,24 @@ export default class WebServer {
     }
 
     private createServer() {
-        const request = (request: IncomingMessage, response: ServerResponse) => {
-            response.write("Hi");
+        const request = (request: HttpIncomingMessage, response: HttpServerResponse) => {
+            const serverResponse = new ServerResponse(request, response);
+            let matched = false;
+
             if (request.method == "GET") {
-                this.events.get.forEach((event: any) => {
+                this.events.get.forEach((event: any, index: number, eventKey: any) => {
                     if (event.path == request.url) {
+                        matched = true;
                         event.callback(() => response.end());
+                    }
+
+                    if (this.config?.notFound?.get) {
+                        if (index == eventKey.length - 1 && !matched) {
+                            this.events.get404.forEach((event: any) => {
+                                console.log(`[ 404 ] At path: ${request.url}`);
+                                event.callback(() => response.end());
+                            });
+                        }
                     }
                 });
             }
@@ -59,9 +81,20 @@ export default class WebServer {
         this.server?.listen(this.config?.port, this.config?.host);
     }
 
-    public on(event: "get", path: string, callback: (end: () => any) => any): void;
+    public on(event: "get", callback: (end: () => any) => any, path: string): void;
+    public on(event: "get404", callback: (end: () => any) => any): void;
 
-    public on(event: any, path: string, callback: any) {
+    public on(event: any, callback: any, path?: string) {
+        if (path) {
+            this.meta[event].forEach((meta: string, index: number) => {
+                if (meta == path) {
+                    delete this.meta[event][index];
+                }
+            });
+
+            this.meta[event].push(path ? path : "");
+        }
+
         this.events[event].push({
             path: path,
             callback: callback

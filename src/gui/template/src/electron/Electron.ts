@@ -1,46 +1,24 @@
-import { app, BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow } from "electron";
 import path from "path";
 import electronIsDev from "electron-is-dev";
 
 app.on("ready", () => {
     const appWindow = new BrowserWindow({
-        width: 1500,
-        height: 800,
+        width: 1200,
+        height: 600,
         frame: false,
-        backgroundColor: "transparent",
-        transparent: true,
+        show: false,
+        backgroundColor: "#121212",
         webPreferences: {
             nodeIntegration: true,
-            contextIsolation: false,
-            webviewTag: true 
+            contextIsolation: false, 
+            webviewTag: true,
+            enableRemoteModule: true
         }
     });
-
-    ipcMain.on("electron:close", () => {
-        process.stdout.write("app-closed");
-        app.exit();
-    });
-
-    ipcMain.on("electron:size", () => {
-        if (appWindow.isMaximized()) {
-            appWindow.restore();
-            return;
-        }
-
-        appWindow.maximize();
-    });
-
-    ipcMain.on("electron:minimize", () => {
-        appWindow.minimize();
-    });
-
-    appWindow.on("close", () => {
-        process.stdout.write("app-closed");
-    });
-
-    ipcMain.on("electron:isMaximized", () => {
-        appWindow.webContents.send("electron:isMaximized", appWindow.isMaximized());
-    });
+ 
+    appWindow.once("ready-to-show", () => appWindow.show());
+    require("@electron/remote/main").initialize();
 
     if (electronIsDev) {
         const args = process.argv.splice(2);

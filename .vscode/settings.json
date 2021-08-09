@@ -9,5 +9,11 @@
     },
     "search.exclude": {
         "*.js": true
+    },
+    "vue3snippets.enable-compile-vue-file-on-did-save-code": false,
+    "vetur.experimental.templateInterpolationService": true,
+    "emmet.includeLanguages": {
+        "vue": "html",
+        "vue-html": "html"
     }
 }

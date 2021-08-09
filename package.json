@@ -8,7 +8,8 @@
   },
   "scripts": {
     "dev": "tsc --watch",
-    "test": "node ./test/Test.js"
+    "test": "node ./test/Test.js",
+    "test:gui": "cd ./src/gui/template && node ./src/Main"
   },
   "repository": {
     "type": "git",
@@ -31,6 +32,7 @@
     "typescript": "^4.3.5"
   },
   "dependencies": {
+    "@electron/remote": "^1.2.1",
     "chalk": "^4.1.1",
     "chokidar": "^3.5.2",
     "os-utils": "^0.0.14",

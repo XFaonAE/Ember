@@ -21,7 +21,7 @@
                 <i class="ms-Icon ms-Icon--Checkbox"></i>
             </button>
 
-            <button @click="closeWindow" >
+            <button class="close" @click="closeWindow" >
                 <i class="ms-Icon ms-Icon--ChromeClose"></i>
             </button>
         </div>
@@ -30,28 +30,34 @@
 
 <script lang="ts">
 import { Vue } from "vue-class-component";
-const { ipcRenderer } = window.require("electron");
+const { getCurrentWindow } = window.require("@electron/remote");
 
 export default class TitleBar extends Vue {
     public windowMaximized: boolean = false;
 
     public created() {
-        ipcRenderer.on("electron:isMaximized", (event: any, answer: any) => {
-            this.windowMaximized = answer;
-        });
+        const window = getCurrentWindow();
+
+        setInterval(() => {
+            this.windowMaximized = window.isMaximized();
+        }, 100);
     }
 
     public closeWindow() {
-        ipcRenderer.send("electron:close");
+        getCurrentWindow().close();
     }
 
     public minimizeWindow() {
-        ipcRenderer.send("electron:minimize");
+        getCurrentWindow().minimize();
     }
 
     public sizeWindow() {
-        ipcRenderer.send("electron:size");
-        ipcRenderer.send("electron:isMaximized");
+        if (this.windowMaximized) {
+            getCurrentWindow().restore();
+            return;
+        }
+
+        getCurrentWindow().maximize();
     }
 }
 </script>
@@ -89,15 +95,16 @@ export default class TitleBar extends Vue {
     .buttons button {
         -webkit-app-region: no-drag;
         height: 30px;
-        padding: 0 15px;
+        padding: 0 18px;
         border: none;
-        color: @text;
+        color: @textDim;
         background: transparent;
         transition: 300ms;
         cursor: pointer;
 
         &:hover {
             background: @layer1;
+            color: @text;
             transition: 100ms;
         }
 

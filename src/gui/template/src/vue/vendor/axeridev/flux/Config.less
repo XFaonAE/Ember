@@ -1,9 +1,8 @@
-// @font-face {
-//     font-family: "SegoeUI Variable";
-//     src: url("./vendors/SegoeUI-VF.ttf")
-// }
-
 @import url("./fabric/fabric.min.css");
+@font-face {
+    font-family: "SegoeUI Variable";
+    src: url("./fonts/SegoeUI-VF.ttf")
+}
 
 * {
     box-sizing: border-box;
@@ -19,20 +18,24 @@ body {
 }
 
 ._scheme_dark {
+    --level: rgb(0, 0, 0);
     --layer0: rgb(27, 27, 27);
     --layer1: rgb(32, 32, 32);
     --layer2: rgb(43, 43, 43);
     --layer3: rgb(55, 55, 55);
     --text: rgb(255, 255, 255);
+    --textDim: rgb(170, 170, 170);
+    --medium: rgb(100, 100, 100);
     --accent: rgb(116, 189, 221);
     --destructive: rgb(255, 100, 100);
+    --error: rgb(255, 150, 150);
     --warning: rgb(255, 255, 100);
 }
 
 ._scheme_light {
-    --layer0: rgb(210, 210, 210);
-    --layer1: rgb(220, 220, 220);
-    --layer2: rgb(240, 240, 240);
+    --layer0: rgb(231, 235, 240);
+    --layer1: rgb(237, 244, 249);
+    --layer2: rgb(251, 251, 253);
     --layer3: rgb(255, 255, 255);
     --text: rgb(0, 0, 0);
     --accent: rgb(116, 189, 221);
@@ -40,13 +43,17 @@ body {
     --warning: rgb(255, 255, 100);
 }
 
+@level: var(--level);
 @layer0: var(--layer0);
 @layer1: var(--layer1);
 @layer2: var(--layer2);
 @layer3: var(--layer3);
 @text: var(--text);
+@textDim: var(--textDim);
+@medium: var(--medium);
 @accent: var(--accent);
 @destructive: var(--destructive);
+@error: var(--error);
 @warning: var(--warning);
 
 @mainFont: "SegoeUI Variable", sans-serif;
