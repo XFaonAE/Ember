@@ -112,7 +112,8 @@ export default class Runner {
             }
 
             const start = () => {
-                service = spawn(electronExe, [ ".", "http://" + host, (process.platform == "linux" ? "--no-sandbox" : "") ]);
+                // TODO: Checks for macos
+                service = spawn(electronExe, [ ".", "http://" + host, "--no-sandbox" ]);
 
                 service.stdout?.on("data", (data: any) => write(data.toString()));
                 service.stderr?.on("data", (data: any) => write(data.toString()));
