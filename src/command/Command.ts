@@ -57,8 +57,6 @@ export default class Command {
             }
         } as ParseOptions, options);
 
-        console.log(config);
-
         const chunks = fullCommand.split(" ");
         const result: { trigger: string, args: string[], flags: { [ index: string ]: any } } = { trigger: chunks[0], args: [], flags: {} };
 
@@ -80,7 +78,6 @@ export default class Command {
                     const flag = /--([^"]+)=([^"]+)/.exec(chunk);
 
                     if (flag) {
-                        console.log(config)
                         if (config.flag?.parseBoolean) {
                             if (flag[2].toLowerCase() == "true") {
                                 value = true;
@@ -118,7 +115,6 @@ export default class Command {
 
     public run(trigger: string, args: string[], flags: RunEventOptions["flags"]) {
         const command = this.getCommand(trigger);
-        const options = command?.options;
         const callback = command?.callback ? command?.callback : () => {};
 
         callback(args, flags);

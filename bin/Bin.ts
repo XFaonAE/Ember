@@ -1,21 +1,26 @@
 #!/usr/bin/env node
 
-import { command, macros, terminal } from "../src/Main";
+import { command, terminal } from "../src/Main";
 import Gui from "./gui/Gui";
-
-macros.add("bin:Bin UnknownCommand", (bin: string) => {
-    terminal.error(`Unknown command, use "help ${ bin }" to get a list of available commands`);
-});
 
 const row = (key: string, value: string) => {
     terminal.row(key, value);
 }
 
+const execute = (commandName: string, handle: any, args: string[], flags: any) => {
+    if (handle[commandName] !== undefined) {
+        handle[commandName](args, flags);
+        return;
+    }
+
+    terminal.error(`Unknown command "${commandName}", use "help" to get help`);
+}
+
 command.on("run", (args: string[]) => {
     switch (args[0]) {
         case "gui":
-            row(" gui init", "Initialize a new GUI application");
-            row("  gui dev", "Start a development server for the current GUI application");
+            row("gui init", "Initialize a new GUI application");
+            row("gui dev", "Start a development server for the current GUI application");
             row("gui build", "Build the current GUI application");
             break;
 
@@ -25,10 +30,8 @@ command.on("run", (args: string[]) => {
     }
 }, { triggers: [ "help", "" ] });
 
-new Gui();
+command.on("run", (args: string[], flags: any) => {
+    execute(args[0], new Gui(), args, flags);
+}, { triggers: [ "gui" ] })
 
-command.setInputMode("process", {
-    flag: {
-        parseBoolean: false
-    }
-});
+command.setInputMode("process");

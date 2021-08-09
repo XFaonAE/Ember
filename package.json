@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/AxeriDev/Ember#readme",
   "devDependencies": {
+    "@types/fs-extra": "^9.0.12",
     "@types/node": "^16.4.7",
     "@types/os-utils": "^0.0.1",
     "@types/websocket": "^1.0.4",
@@ -35,6 +36,7 @@
     "@electron/remote": "^1.2.1",
     "chalk": "^4.1.1",
     "chokidar": "^3.5.2",
+    "fs-extra": "^8.1.0",
     "os-utils": "^0.0.14",
     "websocket": "^1.0.34"
   }

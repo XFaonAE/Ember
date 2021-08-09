@@ -1,10 +1,10 @@
 {
-  "name": "template",
+  "name": "unnamed",
+  "description": "",
   "version": "0.0.1",
-  "main": "./src/electron/Electron.js",
-  "scripts": {
-    "dev": "node ./src/Main.js"
-  },
+  "keywords": [
+    "AxeriEmber"
+  ],
   "dependencies": {
     "core-js": "^3.6.5",
     "electron-is-dev": "^2.0.0",
