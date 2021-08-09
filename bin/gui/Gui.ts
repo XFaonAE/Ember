@@ -67,6 +67,7 @@ export default class Gui {
             projectResource.package.dependencies = projectResource.templateProject.package.dependencies;
             projectResource.package.devDependencies = projectResource.templateProject.package.devDependencies;
             projectResource.package.main = projectResource.templateProject.package.main;
+            projectResource.package.dependencies["axeri-ember"] = "^0.0.7"
 
             if (flags.copyTemplate !== false) {
                 terminal.log("Copying template files");
