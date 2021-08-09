@@ -68,8 +68,6 @@ export default class Gui {
             projectResource.package.devDependencies = projectResource.templateProject.package.devDependencies;
             projectResource.package.main = projectResource.templateProject.package.main;
             projectResource.package.dependencies["axeri-ember"] = "^0.0.7";
-            let mainFile = fs.readFileSync(path.join(process.cwd(), "./src/Main.ts"), "utf8");
-            let vueFile = fs.readFileSync(path.join(process.cwd(), "./src/vue/Vue.ts"), "utf8");
 
             if (answers["Install Flux UI components"].toLowerCase() == "yes") {
                 projectResource.package.dependencies["axeri-flux-ui"] = "^0.0.1";
@@ -81,6 +79,9 @@ export default class Gui {
             } else {
                 terminal.warning("Skipping task for copying template files");
             }
+
+            let mainFile = fs.readFileSync(path.join(process.cwd(), "./src/Main.ts"), "utf8");
+            let vueFile = fs.readFileSync(path.join(process.cwd(), "./src/vue/Vue.ts"), "utf8");
 
             if (flags.writePackage !== false) {
                 terminal.log("Writing project package");
