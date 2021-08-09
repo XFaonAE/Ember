@@ -1,7 +1,7 @@
 import { terminal } from "../../src/Main";
 import fs from "fs-extra";
 import path from "path";
-import { spawn } from "child_process";
+import { exec, spawn } from "child_process";
 
 export default class Gui {
     public dev(args: string[], flags: any) {
@@ -113,9 +113,52 @@ export default class Gui {
             terminal.log("Re-writing VueJS entry script");
             fs.writeFileSync(path.join(process.cwd(), "./src/vue/Vue.ts"), vueFile);
 
-            terminal.success("Project initialization finished");
-            terminal.row("ember gui dev", "Start the application for development");
-            terminal.row("ember gui build [ Coming Soon ]", "Build the application for production");
+            const installPackages = (done: () => any) => {
+                if (flags.install !== false) {
+                    terminal.log("Installing packages");
+                    const npmJs = exec("npm install");
+                    const npmWrite = (data: string) => {
+                        if (data.startsWith("\nup to date")) {
+                            done();
+                        }
+                    }
+
+                    npmJs.stderr?.on("data", (data: string) => npmWrite(data));
+                    npmJs.stdout?.on("data", (data: string) => npmWrite(data));
+                } else {
+                    terminal.warning("Skipped task for installing packages");
+                    done();
+                }
+            }
+
+            const compileTs = (done: () => any) => {
+                if (flags.compileTypeScript !== false) {
+                    terminal.log("Compiling TypeScript");
+                    const tsJs = exec("npx tsc");
+                    let ready = false;
+
+                    const writeTsJs = (data: string) {
+                        if (!ready) {
+                            ready = true;
+                            done();
+                        }
+                    }
+
+                    tsJs.stdout?.on("data", (data: string) => writeTsJs(data))
+                    tsJs.stderr?.on("data", (data: string) => writeTsJs(data))
+                } else {
+                    terminal.warning("Skipping TypeScript compiler");
+                    done();
+                }
+            }
+
+            installPackages(() => {
+                compileTs(() => {
+                    terminal.success("Project initialization finished");
+                    terminal.row("ember gui dev", "Start the application for development");
+                    terminal.row("ember gui build [ Coming Soon ]", "Build the application for production");
+                });
+            });
         });
     }
 }
