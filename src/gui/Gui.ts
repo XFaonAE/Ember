@@ -1,4 +1,4 @@
-import { terminal } from "../Main";
+import { terminal, utils } from "../Main";
 import Runner from "./Runner";
 
 export interface AppOptions {
@@ -8,7 +8,8 @@ export interface AppOptions {
         electron?: boolean;
     };
     electron?: {
-        saveRestartTime?: number
+        saveRestartTime?: number;
+        log?: boolean;
     };
 }
 
@@ -25,11 +26,12 @@ export default class Gui {
                     electron: false
                 },
                 electron: {
-                    saveRestartTime: 1000
+                    saveRestartTime: 1000,
+                    log: false
                 }
             };
 
-            this.config = { ...defaultOptions, ...options };
+            this.config = utils.parseConfig(defaultOptions, options);
 
             this.runner.runVue(this.config, (host: string) => {
                 this.runner.runElectron(this.config, host, () => {

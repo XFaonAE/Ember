@@ -1,9 +1,9 @@
 {
-  "name": "unnamed",
+  "name": "example",
   "description": "",
   "version": "0.0.1",
   "keywords": [
-    "AxeriEmber"
+    "Example"
   ],
   "dependencies": {
     "core-js": "^3.6.5",
@@ -29,5 +29,6 @@
     "less": "^3.0.4",
     "less-loader": "^5.0.0",
     "typescript": "~4.1.5"
-  }
+  },
+  "main": "./src/electron/Electron.js"
 }

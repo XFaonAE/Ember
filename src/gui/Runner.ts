@@ -78,6 +78,10 @@ export default class Runner {
             }
 
             const write = (data: string) => {
+                if (config.electron?.log) {
+                    process.stdout.write(data);
+                }
+
                 switch (data) {
                     case "dev-host-ready":
                         if (!ready) {

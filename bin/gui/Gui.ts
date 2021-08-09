@@ -1,10 +1,28 @@
 import { terminal } from "../../src/Main";
 import fs from "fs-extra";
 import path from "path";
+import { spawn } from "child_process";
+import chalk from "chalk";
 
 export default class Gui {
     public dev(args: string[], flags: any) {
-        terminal.log("The dev server has not yet been implemented into this current build, please try again later after updating");
+        if (fs.existsSync(path.join(process.cwd(), "./src/Main.ts"))) {
+            const devServer = spawn("node", [ "./src/Main" ], {
+                cwd: process.cwd(),
+                shell: true,
+                stdio: "inherit"
+            });
+
+            const write = (data: string) => {
+                process.stdout.write(data);
+            }
+
+            devServer.stdout?.on("data", (data: string) => write(data));
+            devServer.stderr?.on("data", (data: string) => write(data));
+            return;
+        }
+
+        terminal.error("The entry script for this project does not exist");
     }
 
     public init(args: string[], flags: any) {
@@ -49,6 +67,7 @@ export default class Gui {
             projectResource.package.keywords = answers["Keywords"].split(" ");
             projectResource.package.dependencies = projectResource.templateProject.package.dependencies;
             projectResource.package.devDependencies = projectResource.templateProject.package.devDependencies;
+            projectResource.package.main = projectResource.templateProject.package.main;
 
             if (flags.copyTemplate !== false) {
                 terminal.log("Copying template files");
