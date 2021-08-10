@@ -40,14 +40,14 @@ export default class Query {
         }
     }
 
-    public parsePlaceholders(group: string[]): string {
+    public parsePlaceholders(group: string[], placeholder: "?" | "??" = "??"): string {
         let placeholders = "";
         let placeholderArray: string[] = [];
 
         if (group.length == 1) {
-            placeholders = "??";
+            placeholders = placeholder;
         } else if (group.length > 1) {
-            group.forEach((cell: string) => placeholderArray.push("??"));
+            group.forEach((cell: string) => placeholderArray.push(placeholder));
         }
 
         placeholders = placeholderArray.join(", ");
@@ -55,7 +55,9 @@ export default class Query {
     }
 
     public insert(options: InsertQuery) {
-        console.log(this.parseInsert(options));
+        this.isReady(() => {
+            this.connection.query(this.parseInsert(options));
+        });
     }
 
     public parseInsert(options: InsertQuery): string {
@@ -80,10 +82,11 @@ export default class Query {
 
         let values: any[] = [ config.table, ...allColumns, ...allValues ];
 
-        const columnValuePlaceholders = this.parsePlaceholders(allColumns);
+        const columnValuePlaceholders = this.parsePlaceholders(allColumns, "?");
+        const columnColumnPlaceholders = this.parsePlaceholders(allColumns);
 
-        let sqlQuery = this.addRestrict(`INSERT INTO ?? (${columnValuePlaceholders}) VALUES (${columnValuePlaceholders})`, <QueryRestrict>config.restrict, values);
-        const finalQuery = mySql.format(sqlQuery, values);
+        let sqlQuery = this.addRestrict(`INSERT INTO ?? (${columnColumnPlaceholders}) VALUES (${columnValuePlaceholders})`, <QueryRestrict>config.restrict, values);
+        const finalQuery = mySql.format(sqlQuery, values, true);
 
         return finalQuery;
     }

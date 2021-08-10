@@ -15,19 +15,19 @@ server.on("open", () => {
         data: [
             {
                 column: "message",
-                value: "" + Math.random()
+                value: "" + "ME"
             },
             {
                 column: "id",
                 value: "test"
             }
         ]
-    })
+    });
 
-    // server.query.select({
-    //     table: "_test_",
-    //     columns: "*"
-    // });
+    server.query.select({
+        table: "_test_",
+        columns: "*"
+    });
 });
 
 server.run();
