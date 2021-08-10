@@ -40,6 +40,20 @@ export default class Query {
         }
     }
 
+    public parsePlaceholders(group: string[]): string {
+        let placeholders = "";
+        let placeholderArray: string[] = [];
+
+        if (group.length == 1) {
+            placeholders = "??";
+        } else if (group.length > 1) {
+            group.forEach((cell: string) => placeholderArray.push("??"));
+        }
+
+        placeholders = placeholderArray.join(", ");
+        return placeholders;
+    }
+
     public insert(options: InsertQuery) {
         console.log(this.parseInsert(options));
     }
@@ -64,8 +78,11 @@ export default class Query {
             allValues.push(columnGroup.value);
         });
 
-        let values: any[] = [ config.table ];
-        let sqlQuery = this.addRestrict("INSERT INTO ??", <QueryRestrict>config.restrict, values);
+        let values: any[] = [ config.table, ...allColumns, ...allValues ];
+
+        const columnValuePlaceholders = this.parsePlaceholders(allColumns);
+
+        let sqlQuery = this.addRestrict(`INSERT INTO ?? (${columnValuePlaceholders}) VALUES (${columnValuePlaceholders})`, <QueryRestrict>config.restrict, values);
         const finalQuery = mySql.format(sqlQuery, values);
 
         return finalQuery;
@@ -97,15 +114,14 @@ export default class Query {
 
         if (Array.isArray(config.columns) && config.columns.length > 1) {
             (() => {
-                let placeholders: any[] = [];
-
-                config.columns.forEach((column: string) => placeholders.push("??"));
-                renderColumns = placeholders.join(", ");
-
-                values.push(...config.columns);
+                renderColumns = this.parsePlaceholders(config.columns);
             })();
         } else {
-            renderColumns = <string>config.columns;
+            if (<string>config.columns == "*") {
+                renderColumns = "*";
+            } else {
+                renderColumns = mySql.escape(<string>config.columns);
+            }
         }
 
         const sqlQuery = this.addRestrict(`SELECT ${renderColumns} FROM ??`, config.restrict ? config.restrict : {}, values);

@@ -10,8 +10,6 @@ const server = sql.create({
 });
 
 server.on("open", () => {
-    console.log("The server has been connected");
-
     server.query.insert({
         table: "_test_",
         data: [
@@ -26,10 +24,10 @@ server.on("open", () => {
         ]
     })
 
-    server.query.select({
-        table: "_test_",
-        columns: "*"
-    });
+    // server.query.select({
+    //     table: "_test_",
+    //     columns: "*"
+    // });
 });
 
 server.run();
