@@ -1,4 +1,4 @@
-import { Connection } from "mysql";
+import mySql, { Connection } from "mysql";
 import { utils } from "../Main";
 
 export interface QueryRestrict {
@@ -7,7 +7,7 @@ export interface QueryRestrict {
 
 export interface SelectQuery {
     table: string;
-    columns: string[];
+    columns: string[] | string;
     restrict?: QueryRestrict;
 }
 
@@ -32,36 +32,34 @@ export default class Query {
         this.isReady(() => {
             const config: SelectQuery = utils.parseConfig({
                 table: "",
-                columns: [],
-                restrict: {
-                    limit: null
-                },
-                beans: {
-                    a: "old"
-                }
-            } as SelectQuery, {
-                table: "",
-                columns: [],
-                restrict: {
-                    limit: 1
-                },
-                beans: {
-                    a: "new"
-                }
-            });
+                columns: "*",
+                restrict: this.restrictDefaults
+            } as SelectQuery, options);
 
-            console.log(config)
-            const sqlQuery = this.addRestrict("SELECT ?? FROM ??", config.restrict ? config.restrict : {});
+            const values: any[] = [  ];
+            if (Array.isArray(config.columns)) {
+                values.push(...config.columns);
+            }
 
-            console.log(sqlQuery);
+            values.push(config.table);
+            const sqlQuery = this.addRestrict(`SELECT ${Array.isArray(config.columns) ? "?? ".repeat(config.columns.length) : "* "}FROM ??`, config.restrict ? config.restrict : {}, values);
+            const finalQuery = mySql.format(sqlQuery, values);
+
+            console.log(finalQuery, values);
+            this.connection.query(finalQuery, (err: any, result: any) => console.log(result));
         });
     }
 
-    public addRestrict(sqlQuery: string, options: QueryRestrict): string {
+    public addRestrict(sqlQuery: string, options: QueryRestrict, values: any[]): string {
         let query = sqlQuery;
 
         if (options.limit) {
-            query += " LIMIT " + options.limit
+            if (typeof options.limit == "number") {
+                query += ` LIMIT ${options.limit}`;
+            } else {
+                query += " LIMIT ??";
+                values.push(options.limit);
+            }
         }
 
         return query;

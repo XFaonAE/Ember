@@ -1,29 +1,24 @@
 import { sql, utils } from "../src/Main";
 
-// const server = sql.create({
-//     port: 3306,
-//     host: "localhost",
-//     auth: {
-//         password: "root"
-//     }
-// });
+const server = sql.create({
+    port: 3306,
+    host: "localhost",
+    database: "main",
+    auth: {
+        password: "root"
+    }
+});
 
-// server.on("open", () => {
-//     console.log("The server has been connected");
+server.on("open", () => {
+    console.log("The server has been connected");
 
-//     server.query.select({
-//         table: "_test_",
-//         columns: [ "*" ],
-//         restrict: {
-//             limit: 2
-//         }
-//     });
-// });
+    server.query.select({
+        table: "_test_",
+        columns: "*",
+        restrict: {
+            limit: 2
+        }
+    });
+});
 
-// server.run();
-
-console.log(utils.parseConfig({
-    prop: null
-}, {
-    prop: "new"
-}))
+server.run();
