@@ -1,20 +1,12 @@
-import { webServer } from "../src/Main";
+import { sql } from "../src/Main";
 
-const server = webServer.create({
-    port: 8080,
+const server = sql.create({
+    port: 3306,
     host: "localhost",
-    notFound: {
-        get: false
+    auth: {
+        password: "root"
     }
 });
 
-server.on("get", (end: any) => {
-    end();
-}, "/");
-
-server.on("get404", (end: any) => {
-    console.log("Error 404");
-    end();
-});
-
 server.run();
+
