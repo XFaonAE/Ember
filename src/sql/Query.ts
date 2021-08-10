@@ -5,6 +5,18 @@ export interface QueryRestrict {
     limit?: number | null;
 }
 
+export interface InsertQuery {
+    table: string;
+    data: [{
+        column: string;
+        value: string;
+    }, ...{
+        column: string;
+        value: string;
+    }[]];
+    restrict?: QueryRestrict;
+}
+
 export interface SelectQuery {
     table: string;
     columns: [ string, string, ...string[] ] | string;
@@ -26,6 +38,37 @@ export default class Query {
         if (!this.ready) {
             this.ready = true;
         }
+    }
+
+    public insert(options: InsertQuery) {
+        console.log(this.parseInsert(options));
+    }
+
+    public parseInsert(options: InsertQuery): string {
+        const config: InsertQuery = utils.parseConfig({
+            table: "",
+            data: [
+                {
+                    column: "",
+                    value: ""
+                }
+            ],
+            restrict: this.restrictDefaults
+        } as InsertQuery, options);
+
+        let allColumns: string[] = [];
+        let allValues: string[] = [];
+
+        config.data.forEach((columnGroup: any, index: number) => {
+            allColumns.push(columnGroup.column);
+            allValues.push(columnGroup.value);
+        });
+
+        let values: any[] = [ config.table ];
+        let sqlQuery = this.addRestrict("INSERT INTO ??", <QueryRestrict>config.restrict, values);
+        const finalQuery = mySql.format(sqlQuery, values);
+
+        return finalQuery;
     }
 
     public select(options: SelectQuery) {
@@ -62,7 +105,7 @@ export default class Query {
                 values.push(...config.columns);
             })();
         } else {
-            renderColumns = config.columns;
+            renderColumns = <string>config.columns;
         }
 
         const sqlQuery = this.addRestrict(`SELECT ${renderColumns} FROM ??`, config.restrict ? config.restrict : {}, values);

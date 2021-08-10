@@ -12,12 +12,23 @@ const server = sql.create({
 server.on("open", () => {
     console.log("The server has been connected");
 
+    server.query.insert({
+        table: "_test_",
+        data: [
+            {
+                column: "message",
+                value: "" + Math.random()
+            },
+            {
+                column: "id",
+                value: "test"
+            }
+        ]
+    })
+
     server.query.select({
         table: "_test_",
-        columns: "*",
-        restrict: {
-            limit: 0
-        }
+        columns: "*"
     });
 });
 
