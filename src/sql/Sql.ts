@@ -1,5 +1,6 @@
 import { utils } from "../Main";
 import mySql, { Connection } from "mysql";
+import Query from "./Query";
 
 export interface Options {
     port: number;
@@ -12,8 +13,10 @@ export interface Options {
 }
 
 export default class Sql {
-    public config?: Options;
-    public server?: Connection;
+    public config!: Options;
+    public connection!: Connection;
+    public events: any = { open: [] };
+    public query!: Query;
 
     public constructor(options?: Options) {
         if (options) {
@@ -27,12 +30,18 @@ export default class Sql {
                 }
             } as Options, options);
 
-            this.server = mySql.createConnection({
-                port: this.config?.port,
-                host: this.config?.host,
-                user: this.config?.auth?.user,
-                password: this.config?.auth?.password,
-                database: this.config?.database
+            this.connection = mySql.createConnection({
+                port: this.config.port,
+                host: this.config.host,
+                user: this.config.auth!.user,
+                password: this.config.auth!.password,
+                database: this.config.database
+            });
+
+            this.query = new Query(this.connection);
+
+            this.on("open", () => {
+                this.query.readySet();
             });
         }
     }
@@ -42,8 +51,18 @@ export default class Sql {
     }
 
     public run() {
-        this.server?.connect((error: any) => {
-            console.log(error ? error : "No Errors");
+        this.connection.connect((error: any) => {
+            if (error) {
+                return;
+            }
+
+            this.events.open.forEach((event: any) => event());
         });
+    }
+
+    public on(event: "open", callback: () => any): void;
+
+    public on(event: any, callback: any) {
+        this.events[event].push(callback);
     }
 }
