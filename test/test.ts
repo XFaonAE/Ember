@@ -9,16 +9,21 @@ const server = sql.create({
     }
 });
 
-server.on("open", () => {
-    console.log("The server has been connected");
+// server.on("open", () => {
+//     console.log("The server has been connected");
 
-    server.query.select({
-        table: "_test_",
-        columns: "*",
-        restrict: {
-            limit: 2
-        }
-    });
-});
+//     server.query.select({
+//         table: "_test_",
+//         columns: "*",
+//         restrict: {
+//             limit: 0
+//         }
+//     });
+// });
+
+console.log(server.query.parseSelect({
+    table: "test",
+    columns: "*"
+}))
 
 server.run();
