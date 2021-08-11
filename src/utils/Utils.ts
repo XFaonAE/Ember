@@ -43,4 +43,58 @@ export default class Utils {
             callback(success);
         });
     }
+
+    public validateInput(inputData: string | object | string[], method: string | ((input: string | object | string[]) => number | object | string[]), options?: any): number {
+        const config = this.parseConfig({
+            modes: {
+                email: (input: string): number => {
+                    // REFERENCE ERROR CODES VALIDATE EMAIL
+                    // ERROR: 0 | All set, no errors
+                    // ERROR: 1 | No email provided
+                    // ERROR: 2 | Invalid email address
+
+                    if (!input || input.length == 0) {
+                        return 1;
+                    }
+
+                    if (input.length < 3 || input.length > 345 || (!/(.*?)@(.*?)/.test(input))) {
+                        return 2;
+                    }
+
+                    return 0;
+                },
+                password: (input: string[]): number => {
+                    // REFERENCE ERROR CODES VALIDATE PASSWORD
+                    // ERROR: 0 | All set, no errors
+                    // ERROR: 1 | Password is too short
+                    // ERROR: 2 | Password is too long
+                    // ERROR: 3 | Passwords do not match
+
+                    if (input[0].length < 8) {
+                        return 1;
+                    }
+
+                    if (input[0].length > 100) {
+                        return 2;
+                    }
+
+                    if (input[0] !== input[1]) {
+                        return 3;
+                    }
+
+                    return 0;
+                }
+            }
+        }, options);
+
+        if (typeof method == "string") {
+            try {
+                return config.modes[method](inputData);
+            } catch (error: any) {
+                throw new Error(`Invalid method "${method}"`);
+            }
+        }
+
+        return <any>method(inputData);
+    }
 }
