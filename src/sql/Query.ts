@@ -54,6 +54,16 @@ export default class Query {
         return placeholders;
     }
 
+    public cleanResult(result: any): any[] {
+        const newResult: any[] = [];
+
+        result.forEach((record: any) => {
+            newResult.push({ ...record });
+        });
+
+        return newResult;
+    }
+
     public insert(options: InsertQuery) {
         this.isReady(() => {
             this.connection.query(this.parseInsert(options));
@@ -91,9 +101,13 @@ export default class Query {
         return finalQuery;
     }
 
-    public select(options: SelectQuery) {
+    public select(options: SelectQuery, callback: (result: any[]) => any) {
         this.isReady(() => {
-            this.connection.query(this.parseSelect(options), (err: any, result: any) => console.log(result));
+            this.connection.query(this.parseSelect(options), (error: any, result: any) => {
+                if (!error) {
+                    callback(this.cleanResult(result));
+                }
+            }); 
         });
     }
 

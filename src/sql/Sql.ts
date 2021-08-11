@@ -16,7 +16,7 @@ export default class Sql {
     public config!: Options;
     public connection!: Connection;
     public events: any = { open: [] };
-    public query!: Query;
+    public query!: Query; 
 
     public constructor(options?: Options) {
         if (options) {

@@ -10,23 +10,11 @@ const server = sql.create({
 });
 
 server.on("open", () => {
-    server.query.insert({
-        table: "_test_",
-        data: [
-            {
-                column: "message",
-                value: "" + "ME"
-            },
-            {
-                column: "id",
-                value: "test"
-            }
-        ]
-    });
-
     server.query.select({
         table: "_test_",
         columns: "*"
+    }, (result: any) => {
+        console.log(result);
     });
 });
 
