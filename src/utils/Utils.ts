@@ -60,6 +60,10 @@ export default class Utils {
         const config = this.parseConfig({
             modes: {
                 email: (input: string): number => {
+                    if (typeof input != "string") {
+                        return -1;
+                    }
+
                     if (!input || input.length == 0) {
                         return EmailErrors.missingEmail;
                     }
@@ -71,6 +75,10 @@ export default class Utils {
                     return 0;
                 },
                 password: (input: string[]): number => {
+                    if (input[0] == undefined || input[1] == undefined) {
+                        return -1;
+                    }
+
                     if (!(input[0]?.length > 0)) {
                         return PasswordErrors.missingPassword;
                     }
