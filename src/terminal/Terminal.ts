@@ -9,19 +9,19 @@ export default class Terminal {
     public prefix? = "";
 
     public log(message: string) {
-        console.info(this.prefix + " " + chalk.hex("#74bddd")(this.charset.logIcon) + "  " + message)
+        console.info(this.prefix + (this.prefix ? "  " : "") + chalk.hex("#74bddd")(this.charset.logIcon) + "  " + message)
     }
 
     public error(message: string) {
-        console.error(this.prefix + " " + chalk.hex("#ff5555")(this.charset.logIcon) + "  " + message)
+        console.error(this.prefix + (this.prefix ? "  " : "") + chalk.hex("#ff5555")(this.charset.logIcon) + "  " + message)
     }
 
     public success(message: string) {
-        console.log(this.prefix + " " + chalk.hex("#50ffab")(this.charset.logIcon) + "  " + message)
+        console.log(this.prefix + (this.prefix ? "  " : "") + chalk.hex("#50ffab")(this.charset.logIcon) + "  " + message)
     }
 
     public warning(message: string) {
-        console.warn(this.prefix + " " + chalk.hex("#ffff55")(this.charset.logIcon) + "  " + message)
+        console.warn(this.prefix + (this.prefix ? "  " : "") + chalk.hex("#ffff55")(this.charset.logIcon) + "  " + message)
     }
 
     public hex(hex: string, text: string) {
