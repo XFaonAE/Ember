@@ -44,7 +44,7 @@ export default class Utils {
         });
     }
 
-    public validateInput(inputData: string | object | string[], method: string | ((input: string | object | string[]) => number | object | string[]), options?: any): number {
+    public validateInput(inputData: string | object | string[], method: string | ((input: string | object | string[]) => number | object | string[]), options: any = {}): number {
         const config = this.parseConfig({
             modes: {
                 email: (input: string): number => {
@@ -66,20 +66,25 @@ export default class Utils {
                 password: (input: string[]): number => {
                     // REFERENCE ERROR CODES VALIDATE PASSWORD
                     // ERROR: 0 | All set, no errors
-                    // ERROR: 1 | Password is too short
-                    // ERROR: 2 | Password is too long
-                    // ERROR: 3 | Passwords do not match
+                    // ERROR: 1 | No password provided
+                    // ERROR: 2 | Password is too short
+                    // ERROR: 3 | Password is too long
+                    // ERROR: 4 | Passwords do not match
 
-                    if (input[0].length < 8) {
+                    if (!(input[0]?.length > 0)) {
                         return 1;
                     }
 
-                    if (input[0].length > 100) {
+                    if (input[0].length < 8) {
                         return 2;
                     }
 
-                    if (input[0] !== input[1]) {
+                    if (input[0]?.length > 100) {
                         return 3;
+                    }
+
+                    if (input[0] !== input[1]) {
+                        return 4;
                     }
 
                     return 0;
