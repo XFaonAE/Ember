@@ -7,7 +7,7 @@ export default class NodeHelper {
     public nodes: ClientConnection[] = [];
 
     public connect(nodes: ServerNode[], config: ServerOptions, callback: () => any) {
-        let index = 0;
+        let connected = 0;
         const count = nodes.length;
 
         nodes.forEach((nodeConfig: ServerNode) => {
@@ -19,12 +19,13 @@ export default class NodeHelper {
 
                 node.on("open", (conn: ClientConnection) => {
                     const next = () => {
-                        if ((count - 1) == index) {
+                        connected++;
+
+                        if (count == connected) {
                             this.connectedAll = true;
                             callback();
                             return;
                         }
-                        index++;
                     }
 
                     conn.send({
