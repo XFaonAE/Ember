@@ -1,21 +1,22 @@
-import { sql, utils } from "../src/Main";
+import bcrypt from "bcrypt";
 
-const server = sql.create({
-    port: 3306,
-    host: "localhost",
-    database: "main",
-    auth: {
-        password: "root"
-    }
-});
+function encrypt(pass: string, cb: any) {
+    bcrypt.genSalt(10, function(err, salt) {
+        if (err) {
+            return cb(err);
+        }
+    
+        bcrypt.hash(pass, salt, function(err, hash) {
+            cb(err, hash);
+        });
+    });
+}
 
-server.on("open", () => {
-    server.query.select({
-        table: "_test_",
-        columns: "*"
-    }, (result: any) => {
-        console.log(result);
+const pass = encrypt("Hello", (err: string, p: any) => {
+    console.log(p);
+
+    bcrypt.compare("Hello", p, function(err, isPasswordMatch) {   
+        console.log(isPasswordMatch);
     });
 });
 
-server.run();
