@@ -1,6 +1,6 @@
 {
   "name": "axeri-ember",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "Ember Framework",
   "main": "./src/Main.js",
   "bin": {
@@ -18,7 +18,7 @@
   },
   "keywords": [
     "Framework",
-    "Axeri",
+    "Axeri", 
     "Ember"
   ],
   "author": "Axeri LLC [ support@axeri.net ]",

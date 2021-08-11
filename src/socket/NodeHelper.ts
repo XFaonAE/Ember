@@ -18,16 +18,6 @@ export default class NodeHelper {
                 });
 
                 node.on("open", (conn: ClientConnection) => {
-                    const next = () => {
-                        connected++;
-
-                        if (count == connected) {
-                            this.connectedAll = true;
-                            callback();
-                            return;
-                        }
-                    }
-
                     conn.send({
                         user: nodeConfig.auth?.user,
                         password: nodeConfig.auth?.password
@@ -43,7 +33,13 @@ export default class NodeHelper {
                             this.nodes.push(conn);
                             conn.props.token = message.token;
                             conn.props.node = true;
-                            next();
+                            connected++;
+
+                            if (count == connected) {
+                                this.connectedAll = true;
+                                callback();
+                                return;
+                            }
                         }
                     }, "nodeAccess");
 

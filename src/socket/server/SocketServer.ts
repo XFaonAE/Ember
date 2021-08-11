@@ -152,14 +152,9 @@ export default class SocketServer {
                     conn.id = this.randomToken(5);
                     this.connections.push(conn);
                 });
-
-                if (autoAccept) {
-                    conn.accept();
-                }
             });
             
             this.nodeHelper.connect(this.config.nodes, this.config, () => {
-                autoAccept = false;
                 this.events.ready.forEach((event: any) => event());
             });
         });
