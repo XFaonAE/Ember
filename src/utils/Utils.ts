@@ -6,6 +6,18 @@ export interface EncryptPasswordOptions {
     };
 }
 
+export enum PasswordErrors {
+    missingPassword,
+    tooShort,
+    tooLong,
+    passwordsNoMatch
+}
+
+export enum EmailErrors {
+    missingEmail,
+    invalid
+}
+
 export default class Utils {
     public parseConfig(defaultOptions: any, replacerConfig: any): any {
         const parse = (defaults: any, replacer: any) => {
@@ -48,43 +60,31 @@ export default class Utils {
         const config = this.parseConfig({
             modes: {
                 email: (input: string): number => {
-                    // REFERENCE ERROR CODES VALIDATE EMAIL
-                    // ERROR: 0 | All set, no errors
-                    // ERROR: 1 | No email provided
-                    // ERROR: 2 | Invalid email address
-
                     if (!input || input.length == 0) {
-                        return 1;
+                        return EmailErrors.missingEmail;
                     }
 
                     if (input.length < 3 || input.length > 345 || (!/(.*?)@(.*?)/.test(input))) {
-                        return 2;
+                        return EmailErrors.invalid;
                     }
 
                     return 0;
                 },
                 password: (input: string[]): number => {
-                    // REFERENCE ERROR CODES VALIDATE PASSWORD
-                    // ERROR: 0 | All set, no errors
-                    // ERROR: 1 | No password provided
-                    // ERROR: 2 | Password is too short
-                    // ERROR: 3 | Password is too long
-                    // ERROR: 4 | Passwords do not match
-
                     if (!(input[0]?.length > 0)) {
-                        return 1;
+                        return PasswordErrors.missingPassword;
                     }
 
                     if (input[0].length < 8) {
-                        return 2;
+                        return PasswordErrors.tooShort;
                     }
 
                     if (input[0]?.length > 100) {
-                        return 3;
+                        return PasswordErrors.tooLong;
                     }
 
                     if (input[0] !== input[1]) {
-                        return 4;
+                        return PasswordErrors.passwordsNoMatch;
                     }
 
                     return 0;
