@@ -6,7 +6,7 @@ export default class Terminal {
     public stdin: Stdin = new Stdin();
     public tag: Tag = new Tag();
     public charset: any = { logIcon: "•" };
-    public prefix?: string;
+    public prefix? = "";
 
     public log(message: string) {
         console.info(this.prefix + " " + chalk.hex("#74bddd")(this.charset.logIcon) + "  " + message)
