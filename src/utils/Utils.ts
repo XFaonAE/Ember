@@ -37,16 +37,14 @@ export default class Utils {
     }
 
     public encryptPassword(password: string, callback: (hash: string) => any, options: EncryptPasswordOptions = {}) {
-        const config = this.parseConfig({
+        const config: EncryptPasswordOptions = this.parseConfig({
             salt: {
                 cycles: 10
             }
         } as EncryptPasswordOptions, options);
 
-        bcrypt.genSalt(config.salt.cycles, (error: any, salt: string) => {
-            bcrypt.hash(password, salt, (error: any, hash: string) => {
-                callback(hash);
-            });
+        bcrypt.hash(password, <number>config.salt!.cycles, (error: any, hash: string) => {
+            callback(hash);
         });
     }
 
