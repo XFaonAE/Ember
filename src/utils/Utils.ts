@@ -72,7 +72,7 @@ export default class Utils {
                         return EmailErrors.invalid;
                     }
 
-                    return 0;
+                    return -2;
                 },
                 password: (input: string[]): number => {
                     if (input[0] == undefined || input[1] == undefined) {
@@ -95,7 +95,7 @@ export default class Utils {
                         return PasswordErrors.passwordsNoMatch;
                     }
 
-                    return 0;
+                    return -2;
                 }
             }
         }, options);
