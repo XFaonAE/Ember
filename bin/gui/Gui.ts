@@ -98,7 +98,7 @@ export default class Gui {
             if (flags.updateGuiImport !== false) {
                 terminal.log("Updating module import");
                 mainFile = mainFile.replace(new RegExp("import { gui } from \"../../../Main\";", "g"), 
-                    "import { gui } from \"axeri-ember\";");
+                    "import { gui } from \"@axeridev/ember\";");
             } else {
                 terminal.warning("Skipping task for updating module import");
             }
@@ -106,7 +106,7 @@ export default class Gui {
             if (answers["Install Flux UI components"].toLowerCase() == "yes") {
                 terminal.log("Installing FluxUI to VueJS");
                 vueFile = vueFile.replace(new RegExp(/\/\* INJECT FLUX \*\//, "g"), `\napp.use(FluxUi.create());`);
-                vueFile = vueFile.replace(new RegExp(/\/\* INJECT FLUX IMPORT \*\//, "g"), `\nimport FluxUi from "axeri-flux-ui/src/vue/Main";`);
+                vueFile = vueFile.replace(new RegExp(/\/\* INJECT FLUX IMPORT \*\//, "g"), `\nimport FluxUi from "@axeridev/flux-ui/src/vue/Main";`);
             } else {
                 terminal.warning("Skipping task for installing FluxUI to VueJS");
                 vueFile = vueFile.replace(new RegExp(/\/\* INJECT FLUX \*\//, "g"), ``);
