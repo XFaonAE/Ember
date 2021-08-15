@@ -5,8 +5,14 @@ import { AppOptions } from "./Gui";
 import chokidar from "chokidar";
 
 export default class Runner {
-    public runVue(config: AppOptions, callback: (host: string) => any) {
-        if (config.skip?.vue) {
+    /**
+     * 
+     * @param config Dev server config
+     * @param callback Finished callback
+     * @returns void
+     */
+    public runVue(config: AppOptions, callback: (host: string) => void) {
+        if (config.vue?.skip) {
             terminal.warning("Skipping VueJS development server");
             callback("");
             return;
@@ -31,8 +37,15 @@ export default class Runner {
         service.stderr?.on("data", (data: string) => write(data));
     }
 
-    public runElectron(config: AppOptions, host: string, callback: () => any) {
-        if (config.skip?.electron) {
+    /**
+     * 
+     * @param config Dev server config
+     * @param host ElectronJS dev server host
+     * @param callback Finished callback
+     * @returns void
+     */
+    public runElectron(config: AppOptions, host: string, callback: () => void) {
+        if (config.electron?.skip) {
             terminal.warning("Skipping ElectronJS development app");
             callback();
             return;

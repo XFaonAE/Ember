@@ -1,32 +1,66 @@
 import { terminal, utils } from "../Main";
 import Runner from "./Runner";
+
 export interface AppOptions {
+    /**
+     * Dev server port
+     */
     port?: number;
-    skip?: {
-        vue?: boolean;
-        electron?: boolean;
-    };
+
+    /**
+     * VueJS dev handle options
+     */
+    vue?: {
+        skip?: boolean;
+    }
+
+    /**
+     * ElectronJS dev handle options
+     */
     electron?: {
+        /**
+         * Time to restart after an electron source file was edited
+         */
         saveRestartTime?: number;
+
+        /**
+         * Log full output from ElectronJS
+         */
         log?: boolean;
+
+        /**
+         * Skip this process
+         */
+        skip?: boolean;
     };
 }
 
 export default class Gui {
+    /**
+     * App dev server config
+     */
     public config: AppOptions = {};
+
+    /**
+     * Instance runner class object
+     */
     public runner: Runner = new Runner();
 
+    /**
+     * @param options Dev server options
+     * @returns void
+     */
     public constructor(options: AppOptions | false = false) {
         if (options) {
             const defaultOptions: AppOptions = {
                 port: 8080,
-                skip: {
-                    vue: false,
-                    electron: false
-                },
                 electron: {
                     saveRestartTime: 1000,
-                    log: false
+                    log: false,
+                    skip: false
+                },
+                vue: {
+                    skip: false
                 }
             };
 
@@ -40,6 +74,11 @@ export default class Gui {
         }
     }
 
+    /**
+     * 
+     * @param options Dev server options
+     * @returns void
+     */
     public create(options: AppOptions = {}) {
         return new Gui(options);
     }
