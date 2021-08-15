@@ -32,13 +32,31 @@ export interface RunEventOptions {
 }
 
 export interface GetCommandReturn {
+    /**
+     * Run event options
+     */
     options: RunEventOptions;
+
+    /**
+     * Command callback
+     */
     callback: (args: string[], flags: any) => void;
 }
 
 export interface ParseCommandResult { 
+    /**
+     * Command trigger
+     */
     trigger: string; 
-    args: string[]; 
+
+    /**
+     * Command args
+     */
+    args: string[];
+    
+    /**
+     * Command flags
+     */
     flags: { 
         [index: string]: any;
     };
@@ -91,7 +109,14 @@ export default class Command {
         callback(result);
     }
 
+    /**
+     * Parse a command string into arguments and flags
+     * @param fullCommand Full executable command
+     * @param callback Callback event
+     * @param options Parse options
+     */
     public async parse(fullCommand: string, callback: (commandResult: ParseCommandResult) => void, options: ParseOptions = {}) {    
+        // Parse config
         const config = utils.parseConfig({
             flag: {
                 default: true,
@@ -102,6 +127,11 @@ export default class Command {
         const chunks = fullCommand.split(" ");
         const result: { trigger: string, args: string[], flags: { [ index: string ]: any } } = { trigger: chunks[0], args: [], flags: {} };
 
+        /**
+         * Get the type of a chunk
+         * @param chunk Command chunk
+         * @returns Command chunk type
+         */
         const getType = (chunk: string): "flag" | "flag-full" | "arg" => {
             if (chunk.startsWith("--")) {
                 return "flag-full";
@@ -157,6 +187,12 @@ export default class Command {
         callback(result);
     }
 
+    /**
+     * Run a command
+     * @param trigger Command trigger
+     * @param args Command args
+     * @param flags Command flags
+     */
     public run(trigger: string, args: string[], flags: RunEventOptions["flags"]) {
         this.getCommand(trigger, (command) => {
             const callback = command?.callback ? command?.callback : () => {};
@@ -164,6 +200,11 @@ export default class Command {
         });
     }
 
+    /**
+     * Set the automatic command execution mode
+     * @param mode Command executor mode
+     * @param parserOptions Command parser options
+     */
     public setInputMode(mode: "process", parserOptions: ParseOptions = {}) {
         switch (mode) {
             case "process":
