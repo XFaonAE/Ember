@@ -1,22 +1,10 @@
-import bcrypt from "bcrypt";
+import { command } from "../src/Main";
 
-function encrypt(pass: string, cb: any) {
-    bcrypt.genSalt(10, function(err, salt) {
-        if (err) {
-            return cb(err);
-        }
-    
-        bcrypt.hash(pass, salt, function(err, hash) {
-            cb(err, hash);
-        });
-    });
-}
-
-const pass = encrypt("Hello", (err: string, p: any) => {
-    console.log(p);
-
-    bcrypt.compare("Hello", p, function(err, isPasswordMatch) {   
-        console.log(isPasswordMatch);
-    });
+command.on("run", (args: string[], flags: any) => {
+    console.log(args, flags);
+}, {
+    triggers: [ "t", "test" ]
 });
 
+command.setInputMode("process");
+console.log("E");

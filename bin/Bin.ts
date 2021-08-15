@@ -3,11 +3,18 @@
 import { command, terminal } from "../src/Main";
 import Gui from "./gui/Gui";
 
+/**
+ * Short hand row function
+ * @param key Key value
+ * @param value Value pair
+ */
 const row = (key: string, value: string) => {
     terminal.row(key, value);
 }
 
-const execute = (commandName: string, handle: any, args: string[], flags: any) => {
+// Execute a grouped command
+const execute = (commandName: string = "help", handle: any, args: string[], flags: any) => {
+    // Find a matching method for this command and run it
     if (handle[commandName] !== undefined) {
         handle[commandName](args, flags);
         return;
@@ -16,6 +23,7 @@ const execute = (commandName: string, handle: any, args: string[], flags: any) =
     terminal.error(`Unknown command "${commandName}", use "help" to get help`);
 }
 
+// Gui command
 command.on("run", (args: string[]) => {
     switch (args[0]) {
         case "gui":
@@ -34,4 +42,5 @@ command.on("run", (args: string[], flags: any) => {
     execute(args[0], new Gui(), args, flags);
 }, { triggers: [ "gui" ] })
 
+// Set cli interface mode
 command.setInputMode("process");

@@ -1,24 +1,63 @@
 import { utils } from "../Main";
 
 export interface ParseOptions {
+    /**
+     * Options for command flag parsing
+     */
     flag?: {
+        /**
+         * Default flag value if no value is provided for a flag
+         */
         default?: any;
+
+        /**
+         * Convert flag string values "true" / "false" to booleans
+         */
         parseBoolean?: boolean;
-    }
+    };
 }
 
 export interface RunEventOptions {
+    /**
+     * Command triggers
+     */
     triggers: string[];
+
+    /**
+     * Command flags
+     */
     flags?: {
         [ index: string ]: string;
     };
 }
 
+export interface GetCommandReturn {
+    options: RunEventOptions;
+    callback: (args: string[], flags: any) => void;
+}
+
+export interface ParseCommandResult { 
+    trigger: string; 
+    args: string[]; 
+    flags: { 
+        [index: string]: any;
+    };
+}
 export default class Command {
+    /**
+     * Command event handler storage
+     */
     public events: { [ index: string ]: any } = { run: [] };
 
-    public on(event: "run", callback: (args: string[], flags: any) => any, options: RunEventOptions): void;
+    public on(event: "run", callback: (args: string[], flags: any) => void, options: RunEventOptions): void;
 
+    /**
+     * 
+     * @param event Event name
+     * @param callback Event trigger callback action
+     * @param options Event handler options
+     * @returns void
+     */
     public on(event: any, callback: any, options?: any) {
         if (event == "run") {
             this.events.run.push({
@@ -32,10 +71,13 @@ export default class Command {
         this.events[event].push(callback);
     }
 
-    public getCommand(trigger: string): {
-        options: RunEventOptions,
-        callback: (args: string[], flags: any) => any
-    } | undefined {
+    /**
+     * Get a command object
+     * @param trigger Command trigger
+     * @param callback Command match callback
+     * @returns void
+     */
+    public async getCommand(trigger: string, callback: (result: GetCommandReturn) => void) {
         let result: any;
 
         this.events.run.forEach((command: any) => {
@@ -46,10 +88,10 @@ export default class Command {
             });
         });
 
-        return result;
+        callback(result);
     }
 
-    public parse(fullCommand: string, options: ParseOptions = {}): { trigger: string, args: string[], flags: { [index: string]: any } } | undefined {    
+    public async parse(fullCommand: string, callback: (commandResult: ParseCommandResult) => void, options: ParseOptions = {}) {    
         const config = utils.parseConfig({
             flag: {
                 default: true,
@@ -83,6 +125,8 @@ export default class Command {
                                 value = true;
                             } else if (flag[2].toLowerCase() == "false") {
                                 value = false;
+                            } else {
+                                value = flag[2];
                             }
                         } else {
                             value = flag[2];
@@ -110,23 +154,24 @@ export default class Command {
             result.args.push(chunk.toLowerCase());
         });
 
-        return result;
+        callback(result);
     }
 
     public run(trigger: string, args: string[], flags: RunEventOptions["flags"]) {
-        const command = this.getCommand(trigger);
-        const callback = command?.callback ? command?.callback : () => {};
-
-        callback(args, flags);
+        this.getCommand(trigger, (command) => {
+            const callback = command?.callback ? command?.callback : () => {};
+            callback(args, flags);
+        });
     }
 
     public setInputMode(mode: "process", parserOptions: ParseOptions = {}) {
         switch (mode) {
             case "process":
                 const args = process.argv.splice(2);
-                const parsed = this.parse(args.join(" "), parserOptions)!;
-                
-                this.run(parsed.trigger, parsed.args, parsed.flags);
+
+                this.parse(args.join(" "), (result: ParseCommandResult) => {
+                    this.run(result.trigger, result.args, result.flags);
+                }, parserOptions);
                 break;
         }
     }
