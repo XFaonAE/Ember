@@ -1,4 +1,4 @@
-import { utils } from "../Main";
+import { terminal, utils } from "../Main";
 import Runner from "./Runner";
 export interface AppOptions {
     port?: number;
@@ -34,7 +34,7 @@ export default class Gui {
 
             this.runner.runVue(this.config, (host: string) => {
                 this.runner.runElectron(this.config, host, () => {
-                    
+                    terminal.success("The app is running successfully at http://" + host);
                 });
             });
         }

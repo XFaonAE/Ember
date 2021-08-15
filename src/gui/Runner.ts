@@ -23,7 +23,6 @@ export default class Runner {
                 const matchData = /Local:\s{3}http:\/\/(.*?)\/ /.exec(data);
                 const devLocation = matchData ? matchData[1] : "localhost";
 
-                terminal.log("VueJS development server is ready");
                 callback(devLocation);
             }  
         }
@@ -84,7 +83,6 @@ export default class Runner {
                 switch (data) {
                     case "dev-host-ready":
                         if (!ready) {
-                            terminal.log("ElectronJS development app is ready");
                             ready = true;
 
                             watchRestart();

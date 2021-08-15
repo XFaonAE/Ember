@@ -2,6 +2,7 @@ import { terminal } from "../../src/Main";
 import fs from "fs-extra";
 import path from "path";
 import { exec, spawn } from "child_process";
+import packageNode from "../../package.json";
 
 export default class Gui {
     public dev(args: string[], flags: any) {
@@ -72,10 +73,10 @@ export default class Gui {
             projectResource.package.dependencies = projectResource.templateProject.package.dependencies;
             projectResource.package.devDependencies = projectResource.templateProject.package.devDependencies;
             projectResource.package.main = projectResource.templateProject.package.main;
-            projectResource.package.dependencies["axeri-ember"] = "^0.0.7";
+            projectResource.package.dependencies["@axeridev/ember"] = "^" + packageNode.version;
 
             if (answers["Install Flux UI components"].toLowerCase() == "yes") {
-                projectResource.package.dependencies["axeri-flux-ui"] = "^0.0.1";
+                projectResource.package.dependencies["@axeridev/flux-ui"] = "^0.0.1";
             }
 
             if (flags.copyTemplate !== false) {
