@@ -1,25 +1,25 @@
-import { terminal } from "../../src/Main";
+import { gui, terminal } from "../../src/Main";
 import fs from "fs-extra";
 import path from "path";
-import { exec, spawn } from "child_process";
+import { exec } from "child_process";
 import packageNode from "../../package.json";
 
 export default class Gui {
     public dev(args: string[], flags: any) {
         if (fs.existsSync(path.join(process.cwd(), "./src/Main.ts"))) {
             if (fs.existsSync(path.join(process.cwd(), "./src/Main.js"))) {
-                const devServer = spawn("node", [ "./src/Main" ], {
-                    cwd: process.cwd(),
-                    shell: true,
-                    stdio: "inherit"
+                const devServer = gui.create({
+                    dev: {
+                        server: {
+                            port: 1010
+                        },
+                        project: {
+                            root: process.cwd()
+                        }
+                    }
                 });
 
-                const write = (data: string) => {
-                    process.stdout.write(data);
-                }
-
-                devServer.stdout?.on("data", (data: string) => write(data));
-                devServer.stderr?.on("data", (data: string) => write(data));
+                devServer.run();
                 return;
             }
 

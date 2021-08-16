@@ -19,7 +19,9 @@ export default class Runner {
         }
 
         terminal.log("Starting VueJS development server...");
-        const service = exec("npx vue-cli-service serve " + (config.port ? "--port=" + config.port : ""));
+        const service = exec("npx vue-cli-service serve " + (config.dev?.server?.port ? "--port=" + config.dev.server.port : ""), {
+            cwd: config.dev?.project?.root
+        });
         let ready = false;
 
         const write = (data: string) => {
@@ -54,7 +56,7 @@ export default class Runner {
         terminal.log("Starting ElectronJS development app...");
 
         let ready = false;
-        const electronMeta = exec("node " + path.join(process.cwd(), "./src/electron/GetExe.js"));
+        const electronMeta = exec("node " + path.join(config.dev?.project?.root ?? "", "./src/electron/GetExe.js"));
         electronMeta.stdout?.on("data", (data: string) => {
             const electronExe = data.replace(new RegExp(/\n/, "g"), "");
             let service: null | ChildProcess = null;
@@ -123,7 +125,7 @@ export default class Runner {
 
             const start = () => {
                 service = spawn(electronExe, [ ".", "http://" + host ], {
-                    cwd: process.cwd()
+                    cwd: config.dev?.project?.root
                 });
 
                 service.stdout?.on("data", (data: any) => write(data.toString()));

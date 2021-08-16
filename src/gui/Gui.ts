@@ -3,16 +3,36 @@ import Runner from "./Runner";
 
 export interface AppOptions {
     /**
-     * Dev server port
+     * Dev server config
      */
-    port?: number;
+    dev?: {
+        /**
+         * Server configuration
+         */
+        server?: {
+            /**
+             * Server port
+             */
+            port?: number;
+        };
+
+        /**
+         * Project configuration
+         */
+        project?: {
+            /**
+             * Project root path
+             */
+            root?: string;
+        };
+    };
 
     /**
      * VueJS dev handle options
      */
     vue?: {
         skip?: boolean;
-    }
+    };
 
     /**
      * ElectronJS dev handle options
@@ -53,7 +73,6 @@ export default class Gui {
     public constructor(options: AppOptions | false = false) {
         if (options) {
             const defaultOptions: AppOptions = {
-                port: 8080,
                 electron: {
                     saveRestartTime: 1000,
                     log: false,
@@ -61,16 +80,18 @@ export default class Gui {
                 },
                 vue: {
                     skip: false
+                },
+                dev: {
+                    server: {
+                        port: 8080
+                    },
+                    project: {
+                        root: process.cwd()
+                    }
                 }
             };
 
             this.config = utils.parseConfig(defaultOptions, options);
-
-            this.runner.runVue(this.config, (host: string) => {
-                this.runner.runElectron(this.config, host, () => {
-                    terminal.success("The app is running successfully at http://" + host);
-                });
-            });
         }
     }
 
@@ -81,5 +102,16 @@ export default class Gui {
      */
     public create(options: AppOptions = {}) {
         return new Gui(options);
+    }
+
+    /**
+     * Start the development server
+     */
+    public run() {
+        this.runner.runVue(this.config, (host: string) => {
+            this.runner.runElectron(this.config, host, () => {
+                terminal.success("The app is running successfully at http://" + host);
+            });
+        });
     }
 }
