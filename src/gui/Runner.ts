@@ -124,7 +124,7 @@ export default class Runner {
             }
 
             const start = () => {
-                service = spawn(electronExe, [ ".", "http://" + host ], {
+                service = spawn(electronExe, [ path.join(config.dev?.project?.root!, "./src/electron/Electron.js"), "http://" + host ], {
                     cwd: config.dev?.project?.root
                 });
 

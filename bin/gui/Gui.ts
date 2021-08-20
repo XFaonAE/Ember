@@ -6,28 +6,16 @@ import packageNode from "../../package.json";
 
 export default class Gui {
     public dev(args: string[], flags: any) {
-        if (fs.existsSync(path.join(process.cwd(), "./src/Main.ts"))) {
-            if (fs.existsSync(path.join(process.cwd(), "./src/Main.js"))) {
-                const devServer = gui.create({
-                    dev: {
-                        server: {
-                            port: 1010
-                        },
-                        project: {
-                            root: process.cwd()
-                        }
-                    }
-                });
-
-                devServer.run();
-                return;
+        const devServer = gui.create({
+            dev: {
+                project: {
+                    root: process.cwd()
+                }
             }
+        });
 
-            terminal.error("The entry script has not been compiled");
-            return;
-        }
-
-        terminal.error("The entry script for this project does not exist");
+        devServer.run();
+        return;
     }
 
     public init(args: string[], flags: any) {
