@@ -42,6 +42,7 @@
     "chalk": "^4.1.1",
     "chokidar": "^3.5.2",
     "fs-extra": "^8.1.0",
+    "hide-terminal-cursor": "^0.0.1",
     "mysql": "^2.18.1",
     "node-gyp": "^8.1.0",
     "os-utils": "^0.0.14",

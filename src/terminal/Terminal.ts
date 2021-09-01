@@ -1,27 +1,45 @@
 import chalk from "chalk";
+import { utils } from "../Main";
 import Stdin from "./Stdin";
 import Tag from "./Tag";
+import hideTerminalCursor from "hide-terminal-cursor";
+
+export interface Animation {
+    state?: "error" | "warning" | "success" | "info";
+    interval?: number;
+    message?: string;
+    frames?: string[];
+}
 
 export default class Terminal {
-    public stdin: Stdin = new Stdin();
-    public tag: Tag = new Tag();
-    public charset: any = { logIcon: "•" };
+    public stdin = new Stdin();
+    public tag = new Tag();
+    public charset = { 
+        logIcon: "•", 
+        stateColors: {
+            success: "#50ffab",
+            warning: "#ffff55",
+            error: "#ff5555",
+            info: "#60ffab"
+        } 
+    };
     public prefix? = "";
+    public animation = { running: false, config: {}, loop: null as any, frame: 0 };
 
     public log(message: string) {
-        console.info(this.prefix + (this.prefix ? "  " : "") + chalk.hex("#74bddd")(this.charset.logIcon) + "  " + message)
+        console.info(this.prefix + (this.prefix ? "  " : "") + chalk.hex(this.charset.stateColors.info)(this.charset.logIcon) + "  " + message)
     }
 
     public error(message: string) {
-        console.error(this.prefix + (this.prefix ? "  " : "") + chalk.hex("#ff5555")(this.charset.logIcon) + "  " + message)
+        console.error(this.prefix + (this.prefix ? "  " : "") + chalk.hex(this.charset.stateColors.error)(this.charset.logIcon) + "  " + message)
     }
 
     public success(message: string) {
-        console.log(this.prefix + (this.prefix ? "  " : "") + chalk.hex("#50ffab")(this.charset.logIcon) + "  " + message)
+        console.log(this.prefix + (this.prefix ? "  " : "") + chalk.hex(this.charset.stateColors.success)(this.charset.logIcon) + "  " + message)
     }
 
     public warning(message: string) {
-        console.warn(this.prefix + (this.prefix ? "  " : "") + chalk.hex("#ffff55")(this.charset.logIcon) + "  " + message)
+        console.warn(this.prefix + (this.prefix ? "  " : "") + chalk.hex(this.charset.stateColors.warning)(this.charset.logIcon) + "  " + message)
     }
 
     public hex(hex: string, text: string) {
@@ -38,5 +56,40 @@ export default class Terminal {
 
     public setPrefix(prefix: string) {
         this.prefix = prefix;
+    }
+
+    public animate(message: string, callback: (error: any) => void = () => {}, options: Animation = {}) {
+        if (this.animation.running) {
+            callback(new Error("An animation is already running"));
+            return;
+        }
+
+        this.animation.running = true;
+        hideTerminalCursor()
+
+        const config: Animation = utils.parseConfig({
+            interval: 100,
+            state: "info",
+            frames: [
+                "|",
+                "/",
+                "-",
+                "\\"
+            ]
+        } as Animation, options);
+
+        this.animation.config = config;
+
+        this.animation.loop = setInterval(() => {
+            this.animation.frame++;
+
+            if (this.animation.frame > config.frames!.length - 1) {
+                this.animation.frame = 0;
+            }
+
+            const loaderIcon = this.hex(this.charset.stateColors[config.state ?? "info"], config.frames![this.animation.frame]);
+
+            process.stdout.write(`${loaderIcon}  ${message}\r`);
+        }, config.interval);
     }
 }
