@@ -31,6 +31,6 @@ app.on("ready", () => {
             console.log(reason);
         });
     } else {
-        appWindow.loadFile(path.join(__dirname, "../../dist/vue/")).then(() => {});
+        appWindow.loadFile(path.join(__dirname, "../../dist/vue/index.html")).then(() => {});
     }
 });

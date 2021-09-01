@@ -57,6 +57,7 @@ export default class Runner {
 
         let ready = false;
         const electronMeta = exec("node " + path.join(config.dev?.project?.root ?? "", "./src/electron/GetExe.js"));
+        
         electronMeta.stdout?.on("data", (data: string) => {
             const electronExe = data.replace(new RegExp(/\n/, "g"), "");
             let service: null | ChildProcess = null;

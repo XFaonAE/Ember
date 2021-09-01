@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Home from "../views/Home.vue";
-import TextEditor from "../views/TextEditor.vue";
+import About from "../views/About.vue";
 
 export default createRouter({
     history: createWebHistory(process.env.BASE_URL),
@@ -11,9 +11,9 @@ export default createRouter({
             component: Home
         },
         {
-            path: "/text-editor",
-            name: "textEditor",
-            component: TextEditor
+            path: "/about",
+            name: "about",
+            component: About
         }
     ]
 });

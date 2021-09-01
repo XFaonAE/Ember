@@ -1,7 +1,7 @@
 <template>
     <div class="root">
-        <h1>Ember</h1>
-        <p>Ember Gui Framework</p>
+        <h1>About</h1>
+        <p>This is an about page! Visit our <a href="https://github.com/AxeriDev/Ember" target="_blank">GitHub</a> repository</p>
     </div>
 </template>
 
@@ -14,6 +14,10 @@
     h1 {
         color: #74bddd;
         font-size: 30px;
+    }
+
+    a {
+        color: #74bddd;
     }
 }
 </style>
