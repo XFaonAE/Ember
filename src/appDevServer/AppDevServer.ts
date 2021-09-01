@@ -34,29 +34,16 @@ export default class AppDevServer {
         const config = this.config;
         const starterArgs = [ path.join(config.root!, config.main!), "--colors" ];
         let mainScript: ChildProcess;
-        
-        const attachListeners = () => {
-            // mainScript.stdout?.on("data", (data: Buffer) => {
-            //     process.stdout.write(data.toString());
-            // });
-
-            // mainScript.stderr?.on("data", (data: Buffer) => {
-            //     process.stderr.write(data.toString());
-            // });
-
-            // TODO: Implement
-            // mainScript.stdin?.on("data", (data: any) => {
-            //     process.stdin.read(data);
-            // });
-        }
 
         const start = () => {
             mainScript = spawn("node", starterArgs, { stdio: [ process.stdin, process.stdout, process.stderr ] });
-            attachListeners();
         }
 
         const restart = () => {
             mainScript?.kill();
+            
+            console.log("");
+            terminal.hr();
             start();
         }
 

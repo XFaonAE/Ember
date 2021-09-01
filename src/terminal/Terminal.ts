@@ -122,6 +122,6 @@ export default class Terminal {
     public hr() {
         let columns = process.stdout.columns;
 
-        console.log(columns);
+        console.log(this.hex("#555", "─".repeat(columns)));
     }
 }
