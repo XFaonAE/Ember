@@ -3,5 +3,14 @@ node_modules
 !*.js
 !*.map
 !*.d.ts
+*.ts
+README.md
+tsconfig.json
+.vscode
+.idea
+.vs
+.github
+.examples
+.test
 
 dist
