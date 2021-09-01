@@ -18,7 +18,7 @@ export default class Runner {
             return;
         }
 
-        terminal.log("Starting VueJS development server...");
+        terminal.animate("Starting VueJS development server");
         const service = exec("npx vue-cli-service serve " + (config.dev?.server?.port ? "--port=" + config.dev.server.port : ""), {
             cwd: config.dev?.project?.root
         });
@@ -31,7 +31,9 @@ export default class Runner {
                 const matchData = /Local:\s{3}http:\/\/(.*?)\/ /.exec(data);
                 const devLocation = matchData ? matchData[1] : "localhost";
 
-                callback(devLocation);
+                terminal.endAnimation(null, null, () => {
+                    callback(devLocation);
+                });
             }  
         }
 
