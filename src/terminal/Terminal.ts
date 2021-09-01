@@ -18,7 +18,7 @@ export default class Terminal {
         logIcon: "•", 
         stateColors: {
             success: "#50ffab",
-            warning: "#ffff55",
+            warning: "#ff9900",
             error: "#ff5555",
             info: "#60ffab"
         } 

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { command, terminal } from "../src/Main";
+import General from "./general/General";
 import Gui from "./gui/Gui";
 
 /**
@@ -23,7 +24,6 @@ const execute = (commandName: string = "help", handle: any, args: string[], flag
     terminal.error(`Unknown command "${commandName}", use "help" to get help`);
 }
 
-// Gui command
 command.on("run", (args: string[]) => {
     switch (args[0]) {
         case "gui":
@@ -39,8 +39,16 @@ command.on("run", (args: string[]) => {
 }, { triggers: [ "help", "" ] });
 
 command.on("run", (args: string[], flags: any) => {
+    execute(args[0], new General(), args, flags);
+}, { triggers: [ "general" ] });
+
+command.on("run", (args: string[], flags: any) => {
     execute(args[0], new Gui(), args, flags);
-}, { triggers: [ "gui" ] })
+}, { triggers: [ "gui" ] });
+
+command.on("run", (args: string[], flags: any) => {
+    terminal.warning("The quick start dev server is coming soon :)");
+}, { triggers: [ "dev" ] });
 
 // Set cli interface mode
 command.setInputMode("process");

@@ -7,6 +7,7 @@ import Macros from "./macros/Macros";
 import Utils from "./utils/Utils";
 import WebServer from "./webServer/WebServer";
 import Sql from "./sql/Sql";
+import AppDevServer from "./appDevServer/AppDevServer";
 
 const socket = new Socket();
 export { socket };
@@ -34,3 +35,6 @@ export { webServer };
 
 const sql = new Sql();
 export { sql };
+
+const appDevServer = new AppDevServer();
+export { appDevServer };

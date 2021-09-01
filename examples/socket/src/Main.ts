@@ -1,0 +1,1 @@
+console.log("Ember General App is Running");
