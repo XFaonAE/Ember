@@ -71,7 +71,7 @@ export default class Runner {
             }
 
             const watchRestart = () => {
-                const electronDir = chokidar.watch(path.resolve(process.cwd(), "./src/electron/"));
+                const electronDir = chokidar.watch(path.join(config.dev!.project!.root!, "./src/electron/"));
 
                 let wait: NodeJS.Timer;
                 let initTrue = false;
@@ -83,7 +83,7 @@ export default class Runner {
                             restart();
                         }, config.electron?.saveRestartTime);
                         
-                        wait?.refresh;
+                        wait?.refresh();
                         return;
                     }
 

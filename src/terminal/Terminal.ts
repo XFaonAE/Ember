@@ -118,4 +118,10 @@ export default class Terminal {
     public header(title: string) {
         console.log(chalk.bold(title));
     }
+
+    public hr() {
+        let columns = process.stdout.columns;
+
+        console.log(columns);
+    }
 }
