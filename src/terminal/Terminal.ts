@@ -24,7 +24,7 @@ export default class Terminal {
         } 
     };
     public prefix? = "";
-    public animation = { running: false, config: {}, loop: null as any, frame: 0 };
+    public animation = { running: false, config: {} as Animation, loop: null as any, frame: 0, message: "", ending: false };
 
     public log(message: string) {
         console.info(this.prefix + (this.prefix ? "  " : "") + chalk.hex(this.charset.stateColors.info)(this.charset.logIcon) + "  " + message)
@@ -58,14 +58,15 @@ export default class Terminal {
         this.prefix = prefix;
     }
 
-    public animate(message: string, callback: (error: any) => void = () => {}, options: Animation = {}) {
+    public animate(message: string, options: Animation = {}, callback: (error: any) => void = () => {}) {
         if (this.animation.running) {
             callback(new Error("An animation is already running"));
             return;
         }
 
         this.animation.running = true;
-        hideTerminalCursor()
+        this.animation.message = message;
+        hideTerminalCursor();
 
         const config: Animation = utils.parseConfig({
             interval: 100,
@@ -87,9 +88,24 @@ export default class Terminal {
                 this.animation.frame = 0;
             }
 
-            const loaderIcon = this.hex(this.charset.stateColors[config.state ?? "info"], config.frames![this.animation.frame]);
+            let loaderIcon = this.hex(this.charset.stateColors[config.state ?? "info"], config.frames![this.animation.frame]);
 
-            process.stdout.write(`${loaderIcon}  ${message}\r`);
+            if (this.animation.ending) {
+                loaderIcon = this.hex(this.charset.stateColors[config.state ?? "info"], this.charset.logIcon);
+                this.animation.ending = false;
+                clearInterval(this.animation.loop);
+            }
+
+            process.stdout.write(`\r${loaderIcon}  ${this.animation.message}`);
         }, config.interval);
+    }
+
+    public endAnimation(newMessage?: string, state?: Animation["state"]) {
+        if (state) {
+            this.animation.config.state = state;
+        }
+
+        this.animation.ending = true;
+        this.animation.running = false;
     }
 }
