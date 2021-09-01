@@ -114,4 +114,8 @@ export default class Terminal {
         this.animation.ending = true;
         this.animation.running = false;
     }
+
+    public header(title: string) {
+        console.log(chalk.bold(title));
+    }
 }

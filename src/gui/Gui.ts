@@ -108,6 +108,8 @@ export default class Gui {
      * Start the development server
      */
     public run() {
+        terminal.header("Ember Gui Development Server");
+
         this.runner.runVue(this.config, (host: string) => {
             this.runner.runElectron(this.config, host, () => {
                 terminal.success("The app is running successfully at http://" + host);
