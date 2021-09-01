@@ -24,7 +24,7 @@ export default class Terminal {
         } 
     };
     public prefix? = "";
-    public animation = { running: false, config: {} as Animation, loop: null as any, frame: 0, message: "", ending: false };
+    public animation = { running: false, config: {} as Animation, loop: null as any, frame: 0, message: "", ending: false, endCallback: () => {} };
 
     public log(message: string) {
         console.info(this.prefix + (this.prefix ? "  " : "") + chalk.hex(this.charset.stateColors.info)(this.charset.logIcon) + "  " + message)
@@ -92,15 +92,21 @@ export default class Terminal {
 
             if (this.animation.ending) {
                 loaderIcon = this.hex(this.charset.stateColors[config.state ?? "info"], this.charset.logIcon);
-                this.animation.ending = false;
                 clearInterval(this.animation.loop);
             }
 
-            process.stdout.write(`\r${loaderIcon}  ${this.animation.message}`);
+            process.stdout.write(`\r${loaderIcon}  ${this.animation.message} ${(this.animation.ending ? "\n" : "")}`);
+
+            if (this.animation.ending) {
+                this.animation.endCallback();
+                this.animation.ending = false;
+            }
         }, config.interval);
     }
 
-    public endAnimation(newMessage?: string, state?: Animation["state"]) {
+    public endAnimation(newMessage?: string | null, state?: Animation["state"] | null, callback: () => void = () => {}) {
+        this.animation.endCallback = callback;
+
         if (state) {
             this.animation.config.state = state;
         }

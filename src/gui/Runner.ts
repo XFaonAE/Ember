@@ -53,7 +53,7 @@ export default class Runner {
             return;
         }
 
-        terminal.log("Starting ElectronJS development app...");
+        terminal.animate("Starting ElectronJS development app...");
 
         let ready = false;
         const electronMeta = exec("node " + path.join(config.dev?.project?.root ?? "", "./src/electron/GetExe.js"));
@@ -102,7 +102,10 @@ export default class Runner {
                             ready = true;
 
                             watchRestart();
-                            callback();
+
+                            terminal.endAnimation(null, null, () => {
+                                callback();
+                            });
                         }
                         break;
 
