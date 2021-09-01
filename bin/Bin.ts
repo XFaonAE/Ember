@@ -3,6 +3,8 @@
 import { command, terminal } from "../src/Main";
 import General from "./general/General";
 import Gui from "./gui/Gui";
+import fs from "fs";
+import path from "path";
 
 /**
  * Short hand row function
@@ -47,7 +49,25 @@ command.on("run", (args: string[], flags: any) => {
 }, { triggers: [ "gui" ] });
 
 command.on("run", (args: string[], flags: any) => {
-    terminal.warning("The quick start dev server is coming soon :)");
+    import(path.join(process.cwd(), "./ember.config.js")).then((projectConfig: any) => {
+        projectConfig = projectConfig.default;
+
+        switch (projectConfig.type) {
+            case "general":
+                new General().dev(args, flags);
+                break;
+
+            case "gui":
+                new Gui().dev(args, flags);
+                break;
+
+            default: 
+                terminal.error("Invalid project type in ember.config.ts");
+                break;
+        } 
+    }).catch((error: any) => {
+        terminal.error("Project config does not exist: \"ember.config.ts\"");
+    });
 }, { triggers: [ "dev" ] });
 
 // Set cli interface mode
