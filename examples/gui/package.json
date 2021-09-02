@@ -1,12 +1,11 @@
 {
-  "name": "example",
+  "name": "unnamed",
   "description": "",
   "version": "0.0.1",
   "keywords": [
     "AxeriEmber"
   ],
   "dependencies": {
-    "@axeridev/flux-ui": "^0.0.1",
     "@electron/remote": "^1.2.1",
     "core-js": "^3.6.5",
     "electron-is-dev": "^2.0.0",
@@ -14,12 +13,13 @@
     "ts-loader": "^6.2.2",
     "vue": "^3.0.0",
     "vue-class-component": "^8.0.0-0",
-    "vue-property-decorator": "^9.1.2",
     "vue-router": "^4.0.0-0",
-    "vuex": "^4.0.0-0"
+    "vuex": "^4.0.0-0",
+    "vue-property-decorator": "^9.1.2",
+    "@axeridev/ember": "^0.0.3",
+    "@axeridev/flux-ui": "^0.0.1"
   },
   "devDependencies": {
-    "@axeridev/ember": "file:../..",
     "@types/jquery": "^3.5.6",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-pwa": "~4.5.0",
