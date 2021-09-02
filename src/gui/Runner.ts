@@ -31,9 +31,8 @@ export default class Runner {
                 const matchData = /Local:\s{3}http:\/\/(.*?)\/ /.exec(data);
                 const devLocation = matchData ? matchData[1] : "localhost";
 
-                terminal.endAnimation(null, null, () => {
-                    callback(devLocation);
-                });
+                terminal.endAnimation("VueJS development server is ready", "success");
+                callback(devLocation);
             }  
         }
 
@@ -55,7 +54,7 @@ export default class Runner {
             return;
         }
 
-        terminal.animate("Starting ElectronJS development app...");
+        terminal.animate("Starting ElectronJS development app");
 
         let ready = false;
         const electronMeta = exec("node " + path.join(config.dev?.project?.root ?? "", "./src/electron/GetExe.js"));
@@ -102,19 +101,17 @@ export default class Runner {
                     case "dev-host-ready":
                         if (!ready) {
                             ready = true;
-
                             watchRestart();
 
-                            terminal.endAnimation(null, null, () => {
-                                callback();
-                            });
+                            terminal.endAnimation("ElectronJS development app is ready", "success");
+                            callback();
                         }
                         break;
 
                     case "dev-host-failed":
                         if (!ready) {
                             ready = true;
-                            terminal.error("ElectronJS development app failed");
+                            terminal.endAnimation("ElectronJS development app failed", "error");
 
                             watchRestart();
                             callback();

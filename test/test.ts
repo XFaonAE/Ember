@@ -6,4 +6,8 @@ terminal.animate("Hello", {
 
 setTimeout(() => {
     terminal.endAnimation("New", "error");
-}, 1500);
+
+    terminal.animate("Hello", {
+        state: "info"
+    });
+}, 1000);

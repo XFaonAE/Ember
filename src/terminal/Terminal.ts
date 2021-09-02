@@ -79,7 +79,7 @@ export default class Terminal {
             ]
         } as Animation, options);
 
-        this.animation.config = config;
+        this.animation.config = { ...config };
 
         this.animation.loop = setInterval(() => {
             this.animation.frame++;
@@ -129,9 +129,18 @@ export default class Terminal {
         const lastOutput = `\r${this.hex(this.charset.stateColors[this.animation!.config!.state!], this.charset.logIcon)}  ${this.animation.message}${overflow}`;
 
         process.stdout.write(lastOutput);
-        this.animation.callback = () => {
-            process.stdout.write(lastOutput);
+
+        if (this.animation.ending) {
+            this.animation.callback = () => {
+                process.stdout.write(lastOutput + "\n");
+            }
+
+            this.animation.config = {};
+            return;
         }
+
+        console.log("");
+        this.animation.config = {};
     }
 
     public header(title: string) {
