@@ -5,5 +5,5 @@ terminal.animate("Hello", {
 });
 
 setTimeout(() => {
-    terminal.endAnimation(null, "error");
+    terminal.endAnimation("New", "error");
 }, 1500);

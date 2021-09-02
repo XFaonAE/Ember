@@ -24,7 +24,7 @@ export default class Terminal {
         } 
     };
     public prefix? = "";
-    public animation = { running: false, config: {} as Animation, loop: null as any, frame: 0, message: "", ending: false, endCallback: () => {} };
+    public animation = { running: false, config: {} as Animation, loop: null as any, frame: 0, message: "", ending: false, callback: () => {} };
 
     public log(message: string) {
         console.info(this.prefix + (this.prefix ? "  " : "") + chalk.hex(this.charset.stateColors.info)(this.charset.logIcon) + "  " + message)
@@ -95,24 +95,43 @@ export default class Terminal {
                 clearInterval(this.animation.loop);
             }
 
-            process.stdout.write(`\r${loaderIcon}  ${this.animation.message} ${(this.animation.ending ? "\n" : "")}`);
+            process.stdout.write(`\r${loaderIcon}  ${this.animation.message}`);
 
             if (this.animation.ending) {
-                this.animation.endCallback();
                 this.animation.ending = false;
+                this.animation.callback();
             }
         }, config.interval);
     }
 
-    public endAnimation(newMessage?: string | null, state?: Animation["state"] | null, callback: () => void = () => {}) {
-        this.animation.endCallback = callback;
-
+    public endAnimation(newMessage?: string | null, state?: Animation["state"] | null) {
         if (state) {
             this.animation.config.state = state;
         }
 
+        let lastMessage = this.animation.message;
+        if (newMessage) {
+            this.animation.message = newMessage;
+        }
+
         this.animation.ending = true;
         this.animation.running = false;
+
+        let overflow = "";
+        let overflowLength =  lastMessage.length - this.animation.message.length;
+
+        if (overflowLength < 0) {
+            overflowLength = 0;
+        }
+
+        overflow = " ".repeat(overflowLength);
+
+        const lastOutput = `\r${this.hex(this.charset.stateColors[this.animation!.config!.state!], this.charset.logIcon)}  ${this.animation.message}${overflow}`;
+
+        process.stdout.write(lastOutput);
+        this.animation.callback = () => {
+            process.stdout.write(lastOutput);
+        }
     }
 
     public header(title: string) {
