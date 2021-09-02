@@ -65,7 +65,12 @@ export default class Query {
     }
 
     public insert(options: InsertQuery) {
-        this.isReady(() => {
+        this.isReady((error: ahy) => {
+            if (error) {
+                console.error(error);
+                return;
+            }
+
             this.connection.query(this.parseInsert(options));
         });
     }
@@ -102,7 +107,12 @@ export default class Query {
     }
 
     public select(options: SelectQuery, callback: (result: any[]) => any) {
-        this.isReady(() => {
+        this.isReady((error: any) => {
+            if (error) {
+                console.error(error);
+                return;
+            }
+
             this.connection.query(this.parseSelect(options), (error: any, result: any) => {
                 if (!error) {
                     callback(this.cleanResult(result));
@@ -162,12 +172,12 @@ export default class Query {
         return query;
     }
 
-    private isReady(callback: () => any) {
+    private isReady(callback: (error: any) => any) {
         if (this.ready) {
-            callback();
+            callback(null);
             return;
         }
 
-        throw new Error("The database connection is not ready");
+        callback(new Error("The database connection is not ready"));
     }
 }
