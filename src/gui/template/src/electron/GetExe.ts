@@ -1,3 +1,3 @@
-import electron from "electron";
+import electron from "electron"
 
-console.log(electron);
+console.log(electron)

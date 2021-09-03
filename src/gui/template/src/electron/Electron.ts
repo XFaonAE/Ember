@@ -1,6 +1,6 @@
-import { app, BrowserWindow } from "electron";
-import path from "path";
-import electronIsDev from "electron-is-dev";
+import { app, BrowserWindow } from "electron"
+import path from "path"
+import electronIsDev from "electron-is-dev"
  
 app.on("ready", () => {
     const appWindow = new BrowserWindow({
@@ -15,26 +15,26 @@ app.on("ready", () => {
             webviewTag: true, 
             enableRemoteModule: true
         }
-    }); 
+    }) 
 
-    require("@electron/remote/main").initialize();
-    appWindow.once("ready-to-show", () => appWindow.show()); 
+    require("@electron/remote/main").initialize()
+    appWindow.once("ready-to-show", () => appWindow.show()) 
 
     appWindow.on("closed", () => {
-        process.stdout.write("app-closed");
-    });
+        process.stdout.write("app-closed")
+    })
 
     if (electronIsDev) { 
-        const args = process.argv.splice(2);
-        const devServerLocation = args[0];
+        const args = process.argv.splice(2)
+        const devServerLocation = args[0]
 
         appWindow.loadURL(devServerLocation).then(() => {
-            process.stdout.write("dev-host-ready"); 
+            process.stdout.write("dev-host-ready") 
         }).catch((reason: any) => {
-            process.stdout.write("dev-host-failed");
-            console.log(reason);
-        });
+            process.stdout.write("dev-host-failed")
+            console.log(reason)
+        })
     } else {
-        appWindow.loadFile(path.join(__dirname, "../../dist/vue/index.html")).then(() => {});
+        appWindow.loadFile(path.join(__dirname, "../../dist/vue/index.html")).then(() => {})
     }
-});
+})

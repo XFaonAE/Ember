@@ -1,4 +1,4 @@
-import Cpu from "./Cpu";
+import Cpu from "./Cpu"
 import Ram from "./Ram"
 
 export default class System {

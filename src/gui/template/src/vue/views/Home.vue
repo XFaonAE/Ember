@@ -7,13 +7,13 @@
 
 <style lang="less" scoped>
 .root {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    display: flex
+    flex-direction: column
+    align-items: center
 
     h1 {
-        color: #74bddd;
-        font-size: 30px;
+        color: #74bddd
+        font-size: 30px
     }
 }
 </style>

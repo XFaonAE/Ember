@@ -21,10 +21,10 @@ export default class Query {
             this.connection.query(query, values, (error: any, results: any, fields: any) => {
                 if (error) {
                     callback(error, null, null)
-                    return;
+                    return
                 }
 
-                const result = [] as any[];
+                const result = [] as any[]
 
                 if (Array.isArray(results)) {
                     results.forEach((resultSingle: any) => {

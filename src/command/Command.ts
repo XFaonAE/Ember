@@ -1,4 +1,4 @@
-import { utils } from "../Main";
+import { utils } from "../Main"
 
 export interface ParseOptions {
     /**
@@ -8,66 +8,66 @@ export interface ParseOptions {
         /**
          * Default flag value if no value is provided for a flag
          */
-        default?: any;
+        default?: any
 
         /**
          * Convert flag string values "true" / "false" to booleans
          */
-        parseBoolean?: boolean;
-    };
+        parseBoolean?: boolean
+    }
 }
 
 export interface RunEventOptions {
     /**
      * Command triggers
      */
-    triggers: string[];
+    triggers: string[]
 
     /**
      * Command flags
      */
     flags?: {
-        [ index: string ]: string;
-    };
+        [ index: string ]: string
+    }
 }
 
 export interface GetCommandReturn {
     /**
      * Run event options
      */
-    options: RunEventOptions;
+    options: RunEventOptions
 
     /**
      * Command callback
      */
-    callback: (args: string[], flags: any) => void;
+    callback: (args: string[], flags: any) => void
 }
 
 export interface ParseCommandResult { 
     /**
      * Command trigger
      */
-    trigger: string; 
+    trigger: string 
 
     /**
      * Command args
      */
-    args: string[];
+    args: string[]
     
     /**
      * Command flags
      */
     flags: { 
-        [index: string]: any;
-    };
+        [index: string]: any
+    }
 }
 export default class Command {
     /**
      * Command event handler storage
      */
-    public events: { [ index: string ]: any } = { run: [] };
+    public events: { [ index: string ]: any } = { run: [] }
 
-    public on(event: "run", callback: (args: string[], flags: any) => void, options: RunEventOptions): void;
+    public on(event: "run", callback: (args: string[], flags: any) => void, options: RunEventOptions): void
 
     /**
      * 
@@ -81,12 +81,12 @@ export default class Command {
             this.events.run.push({
                 options: options,
                 callback: callback
-            });
+            })
 
-            return;
+            return
         }
 
-        this.events[event].push(callback);
+        this.events[event].push(callback)
     }
 
     /**
@@ -96,17 +96,17 @@ export default class Command {
      * @returns void
      */
     public async getCommand(trigger: string, callback: (result: GetCommandReturn) => void) {
-        let result: any;
+        let result: any
 
         this.events.run.forEach((command: any) => {
             command.options.triggers.forEach((singleTrigger: string) => {
                 if (singleTrigger == trigger) {
-                    result = command;
+                    result = command
                 }
-            });
-        });
+            })
+        })
 
-        callback(result);
+        callback(result)
     }
 
     /**
@@ -122,10 +122,10 @@ export default class Command {
                 default: true,
                 parseBoolean: true
             }
-        } as ParseOptions, options);
+        } as ParseOptions, options)
 
-        const chunks = fullCommand.split(" ");
-        const result: { trigger: string, args: string[], flags: { [ index: string ]: any } } = { trigger: chunks[0], args: [], flags: {} };
+        const chunks = fullCommand.split(" ")
+        const result: { trigger: string, args: string[], flags: { [ index: string ]: any } } = { trigger: chunks[0], args: [], flags: {} }
 
         /**
          * Get the type of a chunk
@@ -134,57 +134,57 @@ export default class Command {
          */
         const getType = (chunk: string): "flag" | "flag-full" | "arg" => {
             if (chunk.startsWith("--")) {
-                return "flag-full";
+                return "flag-full"
             } else if (chunk.startsWith("-")) {
-                return "flag";
+                return "flag"
             }
 
-            return "arg";
+            return "arg"
         }
 
-        chunks.shift();
+        chunks.shift()
         chunks.forEach((chunk: string) => {
             if (getType(chunk) == "flag-full") {
                 if (/--([^"]+)=([^"]+)/.test(chunk)) {
-                    let value: any;
-                    const flag = /--([^"]+)=([^"]+)/.exec(chunk);
+                    let value: any
+                    const flag = /--([^"]+)=([^"]+)/.exec(chunk)
 
                     if (flag) {
                         if (config.flag?.parseBoolean) {
                             if (flag[2].toLowerCase() == "true") {
-                                value = true;
+                                value = true
                             } else if (flag[2].toLowerCase() == "false") {
-                                value = false;
+                                value = false
                             } else {
-                                value = flag[2];
+                                value = flag[2]
                             }
                         } else {
-                            value = flag[2];
+                            value = flag[2]
                         }
 
-                        result.flags[flag[1]] = value;
+                        result.flags[flag[1]] = value
                     }
                 } else if (/--([^"]+)/) {
-                    const flag = /--([^"]+)/.exec(chunk);
+                    const flag = /--([^"]+)/.exec(chunk)
                     if (flag) {
-                        result.flags[flag[1]] = config.flag?.default;
+                        result.flags[flag[1]] = config.flag?.default
                     }
                 }
 
-                return;
+                return
             } else if (getType(chunk) == "flag") {
-                const flag = /-([^"]+)/.exec(chunk);
+                const flag = /-([^"]+)/.exec(chunk)
                 if (flag) {
-                    result.flags[flag[1]] = config.flag?.default;
+                    result.flags[flag[1]] = config.flag?.default
                 }
 
-                return;
+                return
             }
 
-            result.args.push(chunk.toLowerCase());
-        });
+            result.args.push(chunk.toLowerCase())
+        })
 
-        callback(result);
+        callback(result)
     }
 
     /**
@@ -195,9 +195,9 @@ export default class Command {
      */
     public run(trigger: string, args: string[], flags: RunEventOptions["flags"]) {
         this.getCommand(trigger, (command) => {
-            const callback = command?.callback ? command?.callback : () => {};
-            callback(args, flags);
-        });
+            const callback = command?.callback ? command?.callback : () => {}
+            callback(args, flags)
+        })
     }
 
     /**
@@ -208,12 +208,12 @@ export default class Command {
     public setInputMode(mode: "process", parserOptions: ParseOptions = {}) {
         switch (mode) {
             case "process":
-                const args = process.argv.splice(2);
+                const args = process.argv.splice(2)
 
                 this.parse(args.join(" "), (result: ParseCommandResult) => {
-                    this.run(result.trigger, result.args, result.flags);
-                }, parserOptions);
-                break;
+                    this.run(result.trigger, result.args, result.flags)
+                }, parserOptions)
+                break
         }
     }
 }

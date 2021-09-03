@@ -13,31 +13,31 @@
 
 <style lang="less">
 * {
-    box-sizing: border-box;
-    color: #000;
-    background: #fff;
-    font-family: sans-serif;
-    font-weight: lighter;
-    font-size: 12px;
-    transition: 100ms;
+    box-sizing: border-box
+    color: #000
+    background: #fff
+    font-family: sans-serif
+    font-weight: lighter
+    font-size: 12px
+    transition: 100ms
 }
 
 nav {
     a {
-        padding: 6px 10px;
+        padding: 6px 10px
 
         &:hover {
-            background: rgba(0, 0, 0, 0.05);
+            background: rgba(0, 0, 0, 0.05)
         }
     }
 
     a.router-link-active {
-        color: #74bddd;
+        color: #74bddd
     }
 }
 
 hr {
-    border: none;
-    border-bottom: 1px solid #f1f1f1;
+    border: none
+    border-bottom: 1px solid #f1f1f1
 }
 </style>

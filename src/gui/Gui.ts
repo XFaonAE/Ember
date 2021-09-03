@@ -1,5 +1,5 @@
-import { terminal, utils } from "../Main";
-import Runner from "./Runner";
+import { terminal, utils } from "../Main"
+import Runner from "./Runner"
 
 export interface AppOptions {
     /**
@@ -13,8 +13,8 @@ export interface AppOptions {
             /**
              * Server port
              */
-            port?: number;
-        };
+            port?: number
+        }
 
         /**
          * Project configuration
@@ -23,16 +23,16 @@ export interface AppOptions {
             /**
              * Project root path
              */
-            root?: string;
-        };
-    };
+            root?: string
+        }
+    }
 
     /**
      * VueJS dev handle options
      */
     vue?: {
-        skip?: boolean;
-    };
+        skip?: boolean
+    }
 
     /**
      * ElectronJS dev handle options
@@ -41,30 +41,30 @@ export interface AppOptions {
         /**
          * Time to restart after an electron source file was edited
          */
-        saveRestartTime?: number;
+        saveRestartTime?: number
 
         /**
          * Log full output from ElectronJS
          */
-        log?: boolean;
+        log?: boolean
 
         /**
          * Skip this process
          */
-        skip?: boolean;
-    };
+        skip?: boolean
+    }
 }
 
 export default class Gui {
     /**
      * App dev server config
      */
-    public config: AppOptions = {};
+    public config: AppOptions = {}
 
     /**
      * Instance runner class object
      */
-    public runner: Runner = new Runner();
+    public runner: Runner = new Runner()
 
     /**
      * @param options Dev server options
@@ -89,9 +89,9 @@ export default class Gui {
                         root: process.cwd()
                     }
                 }
-            };
+            }
 
-            this.config = utils.parseConfig(defaultOptions, options);
+            this.config = utils.parseConfig(defaultOptions, options)
         }
     }
 
@@ -101,19 +101,19 @@ export default class Gui {
      * @returns void
      */
     public create(options: AppOptions = {}) {
-        return new Gui(options);
+        return new Gui(options)
     }
 
     /**
      * Start the development server
      */
     public run() {
-        terminal.header("Ember Gui Development Server");
+        terminal.header("Ember Gui Development Server")
 
         this.runner.runVue(this.config, (host: string) => {
             this.runner.runElectron(this.config, host, () => {
-                terminal.success("The app is running successfully at http://" + host);
-            });
-        });
+                terminal.success("The app is running successfully at http://" + host)
+            })
+        })
     }
 }

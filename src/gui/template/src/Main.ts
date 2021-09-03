@@ -1,3 +1,3 @@
-import { gui } from "../../../Main";
+import { gui } from "../../../Main"
 
-const app = gui.create();
+const app = gui.create()

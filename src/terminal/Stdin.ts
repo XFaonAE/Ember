@@ -1,9 +1,9 @@
-import * as readline from "readline";
-import chalk from "chalk";
+import * as readline from "readline"
+import chalk from "chalk"
 
 export interface Question {
-    question: string;
-    defaultAnswer?: string;
+    question: string
+    defaultAnswer?: string
 }
 export default class Stdin {
     public read(question: string, defaultAnswer: string | null | undefined = null, callback: (answer: string) => any) {
@@ -30,26 +30,26 @@ export default class Stdin {
     }
 
     public readPage(questions: Question[], callback: (answers: { [ index: string ]: any }) => any) {
-        let quesIndex = 0;
-        let result: any = {};
-        const quesCount = questions.length;
+        let quesIndex = 0
+        let result: any = {}
+        const quesCount = questions.length
 
         const iterate = () => {
-            const question = questions[quesIndex];
+            const question = questions[quesIndex]
 
             this.read(question.question, question.defaultAnswer, (answer: any) => {
-                result[question.question] = answer;
+                result[question.question] = answer
 
-                quesIndex++;
+                quesIndex++
                 if (quesIndex !== quesCount) {
-                    iterate();
-                    return;
+                    iterate()
+                    return
                 }
 
-                callback(result);
-            });
+                callback(result)
+            })
         }
 
-        iterate();
+        iterate()
     }
 }
