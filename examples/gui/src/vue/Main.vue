@@ -1,43 +1,20 @@
 <template>
     <div class="root">
-        <nav>
-            <router-link to="/">Home</router-link>
-            <router-link to="/about">About</router-link>
-        </nav>
+        <theme-controller ref="E"></theme-controller>
+        <title-bar title="Test App" />
 
-        <hr />
-
-        <router-view />
+        <general-button>Hello Flux!</general-button>
     </div>
 </template>
 
+<script lang="ts">
+export default {
+    mounted() {
+        console.log(this.$refs.E)
+        this.$refs.E.loadTheme("Dark");
+    }
+}
+</script> 
+
 <style lang="less">
-* {
-    box-sizing: border-box;
-    color: #000;
-    background: #fff;
-    font-family: sans-serif;
-    font-weight: lighter;
-    font-size: 12px;
-    transition: 100ms;
-}
-
-nav {
-    a {
-        padding: 6px 10px;
-
-        &:hover {
-            background: rgba(0, 0, 0, 0.05);
-        }
-    }
-
-    a.router-link-active {
-        color: #74bddd;
-    }
-}
-
-hr {
-    border: none;
-    border-bottom: 1px solid #f1f1f1;
-}
 </style>

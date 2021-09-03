@@ -6,6 +6,8 @@
     "AxeriEmber"
   ],
   "dependencies": {
+    "@axeridev/ember": "^0.0.3",
+    "@axeridev/flux-ui": "^0.0.6",
     "@electron/remote": "^1.2.1",
     "core-js": "^3.6.5",
     "electron-is-dev": "^2.0.0",
@@ -13,11 +15,9 @@
     "ts-loader": "^6.2.2",
     "vue": "^3.0.0",
     "vue-class-component": "^8.0.0-0",
-    "vue-router": "^4.0.0-0",
-    "vuex": "^4.0.0-0",
     "vue-property-decorator": "^9.1.2",
-    "@axeridev/ember": "^0.0.3",
-    "@axeridev/flux-ui": "^0.0.1"
+    "vue-router": "^4.0.0-0",
+    "vuex": "^4.0.0-0"
   },
   "devDependencies": {
     "@types/jquery": "^3.5.6",

@@ -131,6 +131,7 @@ export default class Terminal {
 
 	public header(title: string) {
 		console.log(chalk.bold(title))
+        this.hr();
 	}
 
 	public hr() {
