@@ -1,13 +1,29 @@
-import { terminal } from "../src/Main";
+import { sql, terminal } from "../src/Main";
 
-terminal.animate("Hello", {
-    state: "info"
+terminal.animate("Connecting to database server");
+
+const db = sql.create({
+    port: 3306,
+    host: "localhost",
+    database: "axeri"
 });
 
-setTimeout(() => {
-    terminal.endAnimation("New", "error");
+db.on("open", () => {
+    terminal.endAnimation("Connected to database", "success");
 
-    terminal.animate("Hello", {
-        state: "info"
+    db.query.insert({
+        table: "accounts",
+        data: [
+            {
+                column: "name",
+                value: "Test"
+            }
+        ]
     });
-}, 1000);
+});
+
+db.on("error", (error: any) => {
+    terminal.endAnimation(error, "error");
+});
+
+db.run();

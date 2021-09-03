@@ -15,7 +15,7 @@ export interface Options {
 export default class Sql {
     public config!: Options;
     public connection!: Connection;
-    public events: any = { open: [] };
+    public events: any = { open: [], error: [] };
     public query!: Query; 
 
     public constructor(options?: Options) {
@@ -53,6 +53,7 @@ export default class Sql {
     public run() {
         this.connection.connect((error: any) => {
             if (error) {
+                this.events.error.forEach((event: any) => event(new Error("Failed to connect to database")));
                 return;
             }
 
@@ -60,7 +61,8 @@ export default class Sql {
         });
     }
 
-    public on(event: "open", callback: () => any): void;
+    public on(event: "open", callback: () => void): void;
+    public on(event: "error", callback: (error: any) => void): void;
 
     public on(event: any, callback: any) {
         this.events[event].push(callback);

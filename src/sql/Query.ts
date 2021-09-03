@@ -45,9 +45,9 @@ export default class Query {
         let placeholderArray: string[] = [];
 
         if (group.length == 1) {
-            placeholders = placeholder;
+            return placeholder;
         } else if (group.length > 1) {
-            group.forEach((cell: string) => placeholderArray.push(placeholder));
+            group.forEach(() => placeholderArray.push(placeholder));
         }
 
         placeholders = placeholderArray.join(", ");
@@ -65,12 +65,13 @@ export default class Query {
     }
 
     public insert(options: InsertQuery) {
-        this.isReady((error: ahy) => {
+        this.isReady((error: any) => {
             if (error) {
                 console.error(error);
                 return;
             }
 
+            console.log(this.parseInsert(options))
             this.connection.query(this.parseInsert(options));
         });
     }
@@ -90,7 +91,7 @@ export default class Query {
         let allColumns: string[] = [];
         let allValues: string[] = [];
 
-        config.data.forEach((columnGroup: any, index: number) => {
+        config.data.forEach((columnGroup: any) => {
             allColumns.push(columnGroup.column);
             allValues.push(columnGroup.value);
         });
@@ -106,7 +107,7 @@ export default class Query {
         return finalQuery;
     }
 
-    public select(options: SelectQuery, callback: (result: any[]) => any) {
+    public select(options: SelectQuery, callback: (result: any[]) => void) {
         this.isReady((error: any) => {
             if (error) {
                 console.error(error);
@@ -172,7 +173,7 @@ export default class Query {
         return query;
     }
 
-    private isReady(callback: (error: any) => any) {
+    private isReady(callback: (error: any) => void) {
         if (this.ready) {
             callback(null);
             return;
