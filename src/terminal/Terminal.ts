@@ -1,8 +1,8 @@
-import chalk from "chalk"
-import { utils } from "../Main"
-import Stdin from "./Stdin"
-import Tag from "./Tag"
-import hideTerminalCursor from "hide-terminal-cursor"
+import chalk from "chalk";
+import { utils } from "../Main";
+import Stdin from "./Stdin";
+import Tag from "./Tag";
+import hideTerminalCursor from "hide-terminal-cursor";
 
 export interface Animation {
 	state?: "error" | "warning" | "success" | "info"
@@ -12,19 +12,19 @@ export interface Animation {
 }
 
 export default class Terminal {
-	public stdin = new Stdin()
-	public tag = new Tag()
+    public tag = new Tag();
+    public Stdin = new Stdin();
 	public charset = { 
 		logIcon: "•", 
 		stateColors: {
 			success: "#50ffab",
 			warning: "#ff9900",
 			error: "#ff5555",
-			info: "#60ffab"
+			info: "#60cdff"
 		} 
 	}
 	public prefix? = ""
-	public animation = { running: false, config: {} as Animation, loop: null as any, frame: 0, message: "", ending: false, callback: () => {} }
+	public animation = { running: false, config: {} as Animation, loop: null as any, frame: 0, message: "", ending: false, write: false }
 
 	public log(message: string) {
 		console.info(this.prefix + (this.prefix ? "  " : "") + chalk.hex(this.charset.stateColors.info)(this.charset.logIcon) + "  " + message)
@@ -78,30 +78,32 @@ export default class Terminal {
 				"\\"
 			]
 		} as Animation, options)
-
 		this.animation.config = { ...config }
 
-		this.animation.loop = setInterval(() => {
-			this.animation.frame++
+		this.animation.loop = () => {
+			this.animation.write = true;
+			const icon = this.hex(this.charset.stateColors[this.animation.config.state ?? "info"], config.frames![this.animation.frame]);
 
-			if (this.animation.frame > config.frames!.length - 1) {
-				this.animation.frame = 0
-			}
+			process.stdout.write(`\r${icon}  ${this.animation.message}`);
 
-			let loaderIcon = this.hex(this.charset.stateColors[config.state ?? "info"], config.frames![this.animation.frame])
+			setTimeout(() => {
+				if (this.animation.ending) {
+					this.animation.ending = false;
+					this.animation.write = false;
+					return;
+				}
 
-			if (this.animation.ending) {
-				loaderIcon = this.hex(this.charset.stateColors[config.state ?? "info"], this.charset.logIcon)
-				clearInterval(this.animation.loop)
-			}
+				this.animation.frame++;
 
-			process.stdout.write(`\r${loaderIcon}  ${this.animation.message}`)
+				if (this.animation.frame > this.animation.config.frames!.length - 1) {
+					this.animation.frame = 0;
+				}
 
-			if (this.animation.ending) {
-				this.animation.ending = false
-				this.animation.callback()
-			}
-		}, config.interval)
+				this.animation.loop();
+			}, config.interval);
+		}
+
+		this.animation.loop();
 	}
 
 	public endAnimation(newMessage?: string | null, state?: Animation["state"] | null) {
@@ -109,38 +111,22 @@ export default class Terminal {
 			this.animation.config.state = state
 		}
 
-		let lastMessage = this.animation.message
+		let overflow = 0
 		if (newMessage) {
-			this.animation.message = newMessage
+			overflow = this.animation.message.length - newMessage.length
+		}
+
+        if (overflow < 0) {
+            overflow = 0
+        }
+
+		let message = newMessage
+		if (!message) {
+			message = this.animation.message
 		}
 
 		this.animation.ending = true
-		this.animation.running = false
-
-		let overflow = ""
-		let overflowLength =  lastMessage.length - this.animation.message.length
-
-		if (overflowLength < 0) {
-			overflowLength = 0
-		}
-
-		overflow = " ".repeat(overflowLength)
-
-		const lastOutput = `\r${this.hex(this.charset.stateColors[this.animation!.config!.state!], this.charset.logIcon)}  ${this.animation.message}${overflow}`
-
-		process.stdout.write(lastOutput)
-
-		if (this.animation.ending) {
-			this.animation.callback = () => {
-				process.stdout.write(lastOutput + "\n")
-			}
-
-			this.animation.config = {}
-			return
-		}
-
-		console.log("")
-		this.animation.config = {}
+		process.stdout.write(`\r${this.hex(this.charset.stateColors[this.animation.config.state ?? "info"], this.charset.logIcon)}  ${message}${" ".repeat(overflow)}\n`)
 	}
 
 	public header(title: string) {
