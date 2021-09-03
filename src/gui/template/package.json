@@ -1,24 +1,26 @@
 {
   "name": "template",
   "version": "0.0.1",
-  "main": "./src/electron/Electron.js",
   "scripts": {
     "dev": "node ./src/Main.js"
   },
   "dependencies": {
     "@electron/remote": "^1.2.1",
+    "@fluentui/svg-icons": "^1.1.137",
     "core-js": "^3.6.5",
     "electron-is-dev": "^2.0.0",
     "register-service-worker": "^1.7.1",
-    "ts-loader": "^6.2.2",
     "vue": "^3.0.0",
     "vue-class-component": "^8.0.0-0",
+    "vue-property-decorator": "^9.1.2",
     "vue-router": "^4.0.0-0",
     "vuex": "^4.0.0-0",
-    "vue-property-decorator": "^9.1.2"
+    "raw-loader": "^4.0.2",
+    "resize-observer-polyfill": "^1.5.1",
+    "typescript": "~4.1.5"
   },
   "devDependencies": {
-    "@types/jquery": "^3.5.6",
+    "@babel/preset-env": "^7.15.0",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-pwa": "~4.5.0",
     "@vue/cli-plugin-router": "~4.5.0",
@@ -29,8 +31,7 @@
     "electron": "^13.1.8",
     "electron-builder": "^22.11.7",
     "less": "^3.0.4",
-    "less-loader": "^5.0.0",
-    "typescript": "~4.1.5"
+    "less-loader": "^5.0.0"
   },
   "build": {
     "files": [

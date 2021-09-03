@@ -1,5 +1,10 @@
 declare module "*.vue" {
-    import { defineComponent } from "vue";
-    const component: ReturnType<typeof defineComponent>;
+    import type { DefineComponent } from "vue";
+    const component: DefineComponent<{}, {}, any>;
     export default component;
+}
+
+declare module "*.less" {
+    const resource: { [ key: string ]: string };
+    export = resource;
 }
