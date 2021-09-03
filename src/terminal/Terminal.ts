@@ -127,7 +127,6 @@ export default class Terminal {
 		overflow = " ".repeat(overflowLength)
 
 		const lastOutput = `\r${this.hex(this.charset.stateColors[this.animation!.config!.state!], this.charset.logIcon)}  ${this.animation.message}${overflow}`
-
 		process.stdout.write(lastOutput)
 
 		if (this.animation.ending) {
@@ -139,7 +138,8 @@ export default class Terminal {
 			return
 		}
 
-		console.log("")
+        clearInterval(this.animation.loop)
+		process.stdout.write(lastOutput + "\n")
 		this.animation.config = {}
 	}
 

@@ -109,6 +109,7 @@ export default class Gui {
 	 */
 	public run() {
 		terminal.header("Ember Gui Development Server")
+        terminal.hr();
 
 		this.runner.runVue(this.config, (host: string) => {
 			this.runner.runElectron(this.config, host, () => {

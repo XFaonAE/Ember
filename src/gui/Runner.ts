@@ -104,7 +104,7 @@ export default class Runner {
 							watchRestart()
 
 							terminal.endAnimation("ElectronJS development app is ready", "success")
-							callback()
+							// callback()
 						}
 						break
 
