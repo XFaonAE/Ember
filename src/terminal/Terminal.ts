@@ -127,6 +127,8 @@ export default class Terminal {
 
 		this.animation.ending = true
 		process.stdout.write(`\r${this.hex(this.charset.stateColors[this.animation.config.state ?? "info"], this.charset.logIcon)}  ${message}${" ".repeat(overflow)}\n`)
+        this.animation.running = false;
+        this.animation.config = {};
 	}
 
 	public header(title: string) {
