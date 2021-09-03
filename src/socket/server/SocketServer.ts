@@ -71,7 +71,7 @@ export default class SocketServer {
 		const characters = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890"
 		const charactersLength = characters.length
 
-		for (let i = 0 i < size i++) {
+		for (let i = 0; i < size; i++) {
 			result += characters.charAt(Math.floor(Math.random() * charactersLength))
 		}
 
