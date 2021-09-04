@@ -10,7 +10,7 @@ export interface AnimationOptions {
 export default class Animation {
     public config: AnimationOptions;
     public meta = {
-        loop: setInterval(() => {}, 100),
+        loop: null as NodeJS.Timer | null,
         frame: 0,
         running: false
     };
@@ -47,8 +47,9 @@ export default class Animation {
 
     public async stop() {
         this.meta.running = false;
-        clearInterval(this.meta.loop);
+        clearInterval(this.meta.loop!);
 
+        this.meta.loop = null;
         process.stdout.write(`\r${this.getFrame()} \n`);
     }
 
