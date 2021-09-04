@@ -1,28 +1,17 @@
-import { sql, terminal } from "../src/Main"
+import { terminal } from "../src/Main";
 
-terminal.animate("Connecting to database server")
+const ani = terminal.animate({
+    message: "Hello :o"
+});
 
-const db = sql.create({
-	port: 3306,
-	host: "localhost",
-	database: "axeri"
-})
+setTimeout(() => {
+    ani.stop();
 
-db.on("open", () => {
-	terminal.endAnimation("Connected to database", "success")
-
-	db.query.run("UPDATE ?? SET name = ?, email = ?", [ "accounts", "OWO", "Email" ], (error: any, results: any) => {
-		
-		if (results) {
-			console.log(results)
-		} else if (error) {
-			console.error(error)
-		}
-	})
-})
-
-db.on("error", (error: any) => {
-	terminal.endAnimation(error, "error")
-})
-
-db.run()
+    const ani2 = terminal.animate({
+        message: "Hello :o"
+    });
+    
+    setTimeout(() => {
+        ani2.stop();
+    }, 1000);
+}, 1000);
