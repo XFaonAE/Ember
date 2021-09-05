@@ -9,8 +9,10 @@ export interface AnimationOptions {
 }
 
 export default class Animation {
-    public config: AnimationOptions;
+    protected config: AnimationOptions;
+
     private terminalStore: { [ index: string ]: Animation } = {};
+
     public meta = {
         loop: null as NodeJS.Timer | null,
         frame: 0,
@@ -55,7 +57,21 @@ export default class Animation {
         }, this.config.interval);
     }
 
-    public async stop() {
+    public async stop(newMessage?: string | null, newState?: "success" | "warning" | "error" | "info") {
+        let message = this.config.message;
+        let overflow = 0;
+
+        if (newMessage) {
+            overflow = message.length - newMessage.length;
+
+            if (overflow < 0) {
+                overflow = 0;
+            }
+
+            message = newMessage + " ".repeat(overflow);
+            this.config.message = message;
+        }
+
         this.meta.running = false;
         clearInterval(this.meta.loop!);
 

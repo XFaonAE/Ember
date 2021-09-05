@@ -10,7 +10,8 @@
   "scripts": {
     "dev": "tsc --watch",
     "test": "node ./test/Test.js",
-    "test:gui": "cd ./src/gui/template && node ./src/Main"
+    "test:gui": "cd ./src/gui/template && node ./src/Main",
+    "example:gui": "cd ./examples/gui && ember dev"
   },
   "repository": {
     "type": "git",

@@ -22,9 +22,11 @@ export default class Runner {
             message: "Starting VueJS development service",
             store: "main"
         });
+
 		const service = exec("npx vue-cli-service serve " + (config.dev?.server?.port ? "--port=" + config.dev.server.port : ""), {
 			cwd: config.dev?.project?.root
-		})
+		});
+        
 		let ready = false
 
 		const write = (data: string) => {

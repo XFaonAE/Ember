@@ -17,7 +17,7 @@
     "vuex": "^4.0.0-0",
     "vue-property-decorator": "^9.1.2",
     "@axeridev/ember": "^0.0.3",
-    "@axeridev/flux-ui": "^0.0.1"
+    "@axeridev/flux-ui": "^0.0.6"
   },
   "devDependencies": {
     "@types/jquery": "^3.5.6",
