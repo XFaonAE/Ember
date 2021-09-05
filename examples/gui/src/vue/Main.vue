@@ -1,43 +1,50 @@
 <template>
     <div class="root">
-        <nav>
-            <router-link to="/">Home</router-link>
-            <router-link to="/about">About</router-link>
-        </nav>
+        <theme-controller ref="e"></theme-controller>
+        <title-bar title="Bisma Gamer" />
 
-        <hr />
+        <app>
+            <template v-slot:sidebar>
+                <side-rail>
+                    <template v-slot:top>
+                        <side-rail-button icon="home"></side-rail-button>
 
-        <router-view />
+                        <side-rail-button href="/about" icon="info"></side-rail-button>
+                    </template>
+                </side-rail>
+
+                <side-bar>
+                    <side-bar-link>
+                        <template v-slot:icon>
+                            <icon icon="home"></icon>
+                        </template>
+
+                        Home
+                    </side-bar-link>
+
+                    <side-bar-link href="/about">
+                        <template v-slot:icon>
+                            <icon icon="info"></icon>
+                        </template>
+
+                        About
+                    </side-bar-link>
+                </side-bar>
+            </template>
+
+            <template v-slot:default>
+                <router-view></router-view>
+            </template>
+        </app>
     </div>
 </template>
 
-<style lang="less">
-* {
-    box-sizing: border-box;
-    color: #000;
-    background: #fff;
-    font-family: sans-serif;
-    font-weight: lighter;
-    font-size: 12px;
-    transition: 100ms;
-}
+<script lang="ts">
+import { Vue } from "vue-class-component";
 
-nav {
-    a {
-        padding: 6px 10px;
-
-        &:hover {
-            background: rgba(0, 0, 0, 0.05);
-        }
-    }
-
-    a.router-link-active {
-        color: #74bddd;
+export default class Main extends Vue {
+    public mounted() {
+        this.$refs.e.loadTheme("Dark");
     }
 }
-
-hr {
-    border: none;
-    border-bottom: 1px solid #f1f1f1;
-}
-</style>
+</script>
