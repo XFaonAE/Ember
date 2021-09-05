@@ -5,17 +5,19 @@ export interface AnimationOptions {
 	interval?: number;
 	message: string;
 	frames?: string[];
+    store?: string | false;
 }
 
 export default class Animation {
     public config: AnimationOptions;
+    private terminalStore: { [ index: string ]: Animation } = {};
     public meta = {
         loop: null as NodeJS.Timer | null,
         frame: 0,
         running: false
     };
 
-    public constructor(options: AnimationOptions) {
+    public constructor(options: AnimationOptions, terminalStore: { [ index: string ]: Animation }) {
         this.config = utils.parseConfig({
             state: "info",
             interval: 100,
@@ -25,8 +27,13 @@ export default class Animation {
                 "\\",
                 "|",
                 "/"
-            ]
+            ],
+            store: false
         } as AnimationOptions, options);
+
+        if (this.config.store) {
+            this.terminalStore = terminalStore;
+        }
 
         this.meta.running = true;
         this.start();
@@ -34,6 +41,9 @@ export default class Animation {
 
     private async start() {
         this.meta.frame = 0;
+        if (this.config.store) {
+            this.terminalStore[this.config.store] = this;
+        }
 
         this.meta.loop = setInterval(() => {
             this.renderAnimatingCurrent();
@@ -51,6 +61,10 @@ export default class Animation {
 
         this.meta.loop = null;
         process.stdout.write(`\r${this.getFrame()} \n`);
+
+        if (this.config.store) {
+            delete this.terminalStore[this.config.store];
+        }
     }
 
     private getFrame(frame: number = 0): string {

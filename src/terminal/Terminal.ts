@@ -7,6 +7,7 @@ import Animation, { AnimationOptions } from "./Animation";
 export default class Terminal {
 	public stdin = new Stdin();
 	public tag = new Tag();
+    public prefix? = "";
 	public charset = { 
 		logIcon: "•", 
 		stateColors: {
@@ -16,7 +17,8 @@ export default class Terminal {
 			info: "#60ffab"
 		} 
 	};
-	public prefix? = "";
+
+    private animationStore: { [ index: string ]: Animation } = {};
 
 	public log(message: string) {
 		console.info(this.prefix + (this.prefix ? "  " : "") + chalk.hex(this.charset.stateColors.info)(this.charset.logIcon) + "  " + message)
@@ -51,8 +53,16 @@ export default class Terminal {
 	}
 
 	public animate(options: AnimationOptions): Animation {
-        return new Animation(options);
+        return new Animation(options, this.animationStore);
 	}
+
+    public getAnimation(referenceName: string): Animation {
+        if (this.animationStore.hasOwnProperty(referenceName)) {
+            return this.animationStore[referenceName];
+        }
+
+        throw new Error(`No animation with the reference name "${referenceName}" currently exists`);
+    }
 
 	public header(title: string) {
 		console.log(chalk.bold(title))

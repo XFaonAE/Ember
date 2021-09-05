@@ -18,7 +18,10 @@ export default class Runner {
 			return
 		}
 
-		terminal.animate("Starting VueJS development server")
+		terminal.animate({
+            message: "Starting VueJS development service",
+            store: "main"
+        });
 		const service = exec("npx vue-cli-service serve " + (config.dev?.server?.port ? "--port=" + config.dev.server.port : ""), {
 			cwd: config.dev?.project?.root
 		})
@@ -31,7 +34,7 @@ export default class Runner {
 				const matchData = /Local:\s{3}http:\/\/(.*?)\/ /.exec(data)
 				const devLocation = matchData ? matchData[1] : "localhost"
 
-				terminal.endAnimation("VueJS development server is ready", "success")
+				terminal.getAnimation("main").stop("VueJS development service is ready", "success");
 				callback(devLocation)
 			}  
 		}
@@ -54,7 +57,10 @@ export default class Runner {
 			return
 		}
 
-		terminal.animate("Starting ElectronJS development app")
+		terminal.animate({
+            message: "Starting ElectronJS development service",
+            store: "main"
+        });
 
 		let ready = false
 		const electronMeta = exec("node " + path.join(config.dev?.project?.root ?? "", "./src/electron/GetExe.js"))
@@ -103,15 +109,15 @@ export default class Runner {
 							ready = true
 							watchRestart()
 
-							terminal.endAnimation("ElectronJS development app is ready", "success")
-							// callback()
+							terminal.getAnimation("main").stop("ElectronJS development service is ready", "success");
+							callback()
 						}
 						break
 
 					case "dev-host-failed":
 						if (!ready) {
 							ready = true
-							terminal.endAnimation("ElectronJS development app failed", "error")
+							terminal.getAnimation("main").stop("Failed to start ElectronJS development service", "error");
 
 							watchRestart()
 							callback()
