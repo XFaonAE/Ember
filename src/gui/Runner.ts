@@ -11,7 +11,7 @@ export default class Runner {
 	 * @param callback Finished callback
 	 * @returns void
 	 */
-	public runVue(config: AppOptions, callback: (host: string) => void) {
+	public async runVue(config: AppOptions, callback: (host: string) => void) {
 		if (config.vue?.skip) {
 			terminal.warning("Skipping VueJS development server")
 			callback("")
@@ -20,13 +20,13 @@ export default class Runner {
 
 		terminal.animate({
             message: "Starting VueJS development service",
-            store: "main"
+            store: true
         });
 
 		const service = exec("npx vue-cli-service serve " + (config.dev?.server?.port ? "--port=" + config.dev.server.port : ""), {
 			cwd: config.dev?.project?.root
 		});
-        
+
 		let ready = false
 
 		const write = (data: string) => {
@@ -36,7 +36,7 @@ export default class Runner {
 				const matchData = /Local:\s{3}http:\/\/(.*?)\/ /.exec(data)
 				const devLocation = matchData ? matchData[1] : "localhost"
 
-				terminal.getAnimation("main").stop("VueJS development service is ready", "success");
+				terminal.getAnimation()?.stop("VueJS development service is ready", "success");
 				callback(devLocation)
 			}  
 		}
@@ -52,7 +52,7 @@ export default class Runner {
 	 * @param callback Finished callback
 	 * @returns void
 	 */
-	public runElectron(config: AppOptions, host: string, callback: () => void) {
+	public async runElectron(config: AppOptions, host: string, callback: () => void) {
 		if (config.electron?.skip) {
 			terminal.warning("Skipping ElectronJS development app")
 			callback()
@@ -61,7 +61,7 @@ export default class Runner {
 
 		terminal.animate({
             message: "Starting ElectronJS development service",
-            store: "main"
+            store: true
         });
 
 		let ready = false
@@ -111,7 +111,7 @@ export default class Runner {
 							ready = true
 							watchRestart()
 
-							terminal.getAnimation("main").stop("ElectronJS development service is ready", "success");
+							terminal.getAnimation()?.stop("ElectronJS development service is ready", "success");
 							callback()
 						}
 						break
@@ -119,7 +119,7 @@ export default class Runner {
 					case "dev-host-failed":
 						if (!ready) {
 							ready = true
-							terminal.getAnimation("main").stop("Failed to start ElectronJS development service", "error");
+							terminal.getAnimation()?.stop("Failed to start ElectronJS development service", "error");
 
 							watchRestart()
 							callback()

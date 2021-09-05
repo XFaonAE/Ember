@@ -5,13 +5,13 @@ export interface AnimationOptions {
 	interval?: number;
 	message: string;
 	frames?: string[];
-    store?: string | false;
+    store?: boolean;
 }
 
 export default class Animation {
     protected config: AnimationOptions;
 
-    private terminalStore: { [ index: string ]: Animation } = {};
+    private terminalStore: null | Animation = null;
 
     public meta = {
         loop: null as NodeJS.Timer | null,
@@ -19,7 +19,7 @@ export default class Animation {
         running: false
     };
 
-    public constructor(options: AnimationOptions, terminalStore: { [ index: string ]: Animation }) {
+    public constructor(options: AnimationOptions, terminalStore: Animation | null) {
         this.config = utils.parseConfig({
             state: "info",
             interval: 100,
@@ -44,7 +44,7 @@ export default class Animation {
     private async start() {
         this.meta.frame = 0;
         if (this.config.store) {
-            this.terminalStore[this.config.store] = this;
+            this.terminalStore = this;
         }
 
         this.meta.loop = setInterval(() => {
@@ -57,7 +57,7 @@ export default class Animation {
         }, this.config.interval);
     }
 
-    public async stop(newMessage?: string | null, newState?: "success" | "warning" | "error" | "info") {
+    public async update(newMessage?: string | null, newState?: "success" | "warning" | "error" | "info") {
         let message = this.config.message;
         let overflow = 0;
 
@@ -72,6 +72,16 @@ export default class Animation {
             this.config.message = message;
         }
 
+        if (newState) {
+            this.config.state = newState;
+        }
+
+        process.stdout.write(`\r${this.getFrame(this.meta.frame)}`);
+    }
+
+    public async stop(newMessage?: string | null, newState?: "success" | "warning" | "error" | "info") {
+        this.update(newMessage, newState);
+
         this.meta.running = false;
         clearInterval(this.meta.loop!);
 
@@ -79,7 +89,7 @@ export default class Animation {
         process.stdout.write(`\r${this.getFrame()} \n`);
 
         if (this.config.store) {
-            delete this.terminalStore[this.config.store];
+            this.terminalStore = null;
         }
     }
 

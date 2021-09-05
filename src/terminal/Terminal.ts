@@ -18,7 +18,7 @@ export default class Terminal {
 		} 
 	};
 
-    private animationStore: { [ index: string ]: Animation } = {};
+    private animationStore: null | Animation = null;
 
 	public log(message: string) {
 		console.info(this.prefix + (this.prefix ? "  " : "") + chalk.hex(this.charset.stateColors.info)(this.charset.logIcon) + "  " + message)
@@ -56,12 +56,8 @@ export default class Terminal {
         return new Animation(options, this.animationStore);
 	}
 
-    public getAnimation(referenceName: string): Animation {
-        if (this.animationStore.hasOwnProperty(referenceName)) {
-            return this.animationStore[referenceName];
-        }
-
-        throw new Error(`No animation with the reference name "${referenceName}" currently exists`);
+    public getAnimation(): Animation | null {
+        return this.animationStore;
     }
 
 	public header(title: string) {
