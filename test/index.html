@@ -1,0 +1,99 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+
+    <style>
+        body {
+            display: flex;
+        }
+
+        .co {
+            width: 300px;
+            overflow: auto;
+            white-space: pre-wrap;
+            height: 500px;
+            transition: 100ms;
+            box-shadow: inset 0 3px 5px #999999, 0 3px 5px #99999900;
+            padding: 10px;
+        }
+
+        /* .co:hover {
+            box-shadow: inset 0 3px 5px #99999900, 0 3px 5px #999999;
+            transform: translate(0, -3px);
+        } */
+
+        ::-webkit-scrollbar {
+            width: 0;
+            height: 0;
+        }
+
+        .sb {
+            width: 10px;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            position: relative;
+        }
+
+        .th {
+            background: #000;
+            width: 2px;
+            position: absolute;
+            transition: transform 300ms;
+            border-radius: 4px;
+        }
+
+        .sb:hover .th {
+            transform: scaleX(1.6);
+        }
+    </style>
+</head>
+<body>
+    <div class="co">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos nam ea saepe, quae, pariatur, magni debitis ducimus dolorem error tempora inventore cum et! Odit sed nam saepe iusto sequi vitae maxime fuga asperiores non vero illo fugit soluta tempore ipsum nulla similique autem molestias, facere itaque minima nihil velit et praesentium. Quibusdam ad reiciendis quam, natus commodi sequi! Autem ipsum maxime quibusdam, voluptatum assumenda velit labore maiores cupiditate quis minus nulla ullam asperiores fugiat quos non nemo illo officiis perferendis. Doloribus cupiditate repudiandae possimus et! Delectus corrupti atque nisi rerum id expedita praesentium vero optio consequatur voluptas, laborum alias enim magni in eaque libero. Aliquam nobis quo enim quia est nemo nam laborum! Quod adipisci soluta, voluptatem tenetur in esse dicta quas voluptate, at temporibus, obcaecati dolor consequuntur ab nesciunt nemo aliquam magnam autem nihil est vel facere ad! Et quam in obcaecati laboriosam atque officia aliquam cupiditate velit debitis fugit libero excepturi quidem iusto, assumenda blanditiis a vero labore totam voluptate dolores! Rerum quam nostrum et aut consectetur libero accusantium tempora minima assumenda accusamus odio provident odit vitae, labore facere tenetur dolores culpa tempore iste adipisci officiis totam laudantium numquam. Exercitationem adipisci earum voluptatibus, nostrum tempora aut ab quasi voluptate praesentium excepturi placeat autem et quaerat ex dolores distinctio dolorem incidunt itaque laudantium deserunt quisquam molestiae? Commodi sequi quasi facere ipsa, labore culpa ad ea? Assumenda maiores voluptates doloremque delectus perferendis temporibus, asperiores error recusandae. Sunt atque sint consequuntur voluptatum libero molestias aut doloremque maxime aspernatur quisquam numquam repellendus, cumque repellat. Dolor saepe inventore cumque sit numquam earum voluptate iusto incidunt, veniam neque, voluptatem molestiae culpa illo! Corrupti harum, perspiciatis sint voluptatum, quidem neque, corporis voluptatem consequatur atque autem fugiat provident rem quia cupiditate quisquam voluptate accusamus praesentium! Voluptatem quas quod porro provident ipsam libero minus pariatur reiciendis harum? Placeat itaque soluta neque id aut minus exercitationem, numquam ex! Dolorem fugit eos consequatur fugiat aliquam veritatis, obcaecati laudantium eaque commodi dignissimos optio hic esse repudiandae tempora beatae, ex nesciunt iste! Nesciunt hic repellat ipsam molestiae magni quia dolorum cumque corrupti culpa in aliquid odit pariatur tempora et, neque reiciendis ducimus harum! Asperiores eos iste aperiam suscipit saepe et esse rem expedita quae laboriosam delectus corrupti quasi qui aut, maiores itaque ab laborum dicta quos, incidunt doloribus cupiditate a unde repudiandae! Officia assumenda explicabo perspiciatis? Distinctio eius nesciunt iure, consequuntur sequi aperiam suscipit itaque exercitationem repellendus deleniti consectetur perferendis quos blanditiis animi praesentium saepe quasi, iusto vel voluptatibus? Necessitatibus ex non iure, atque optio animi magnam placeat eius aut dolores nam libero obcaecati minus maxime quo dolore laudantium, consectetur exercitationem facere! Quasi, minus. Aut, veritatis, et vitae placeat officiis dicta natus hic iste dolor, omnis eum? Illo, nulla a! Asperiores explicabo ratione tempore nulla nostrum minus amet ab sint, hic expedita vitae enim dolorem ad adipisci cumque earum ullam, corrupti quia porro nihil laboriosam, aspernatur aperiam sapiente nam? Assumenda, eum quod, a minima quisquam pariatur facere nam eveniet optio, quaerat earum doloremque quos ut. Laudantium doloremque labore iste. Libero, a?
+    </div>
+    
+    <div class="sb">
+        <div class="th"></div>
+    </div>
+    
+    <script>
+        const sb = () => {
+            const bar = $(".sb");
+            const th = $(".th");
+            const co = $(".co");
+
+            bar.css({
+                height: co.outerHeight()
+            });
+
+            let thH = 0;
+            let thT = 0;
+
+            thH = (co.outerHeight() / co.innerHeight()) * 100;
+            thT = Math.round(th.height() * co.scrollTop() / co.innerHeight()) * 2 - 5;
+
+            if (thT < 0) {
+                thT = 0;
+            }
+
+            th.css({
+                height: thH,
+                "top": thT +"px"
+            });
+        }
+
+        $(document).ready(() => {
+            sb();
+
+            $(".co").scroll(() => {
+                sb();
+            });
+        });
+    </script>
+</body>
+</html>
