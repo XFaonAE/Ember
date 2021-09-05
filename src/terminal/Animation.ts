@@ -11,15 +11,14 @@ export interface AnimationOptions {
 export default class Animation {
     protected config: AnimationOptions;
 
-    private terminalStore: null | Animation = null;
-
     public meta = {
         loop: null as NodeJS.Timer | null,
         frame: 0,
-        running: false
+        running: false,
+        store: (animation: Animation) => {}
     };
 
-    public constructor(options: AnimationOptions, terminalStore: Animation | null) {
+    public constructor(options: AnimationOptions, setStore: (animation: Animation) => void) {
         this.config = utils.parseConfig({
             state: "info",
             interval: 100,
@@ -34,18 +33,16 @@ export default class Animation {
         } as AnimationOptions, options);
 
         if (this.config.store) {
-            this.terminalStore = terminalStore;
+            setStore(this);
         }
 
-        this.meta.running = true;
+        this.meta.store = setStore;
         this.start();
     }
 
     private async start() {
+        this.meta.running = true;
         this.meta.frame = 0;
-        if (this.config.store) {
-            this.terminalStore = this;
-        }
 
         this.meta.loop = setInterval(() => {
             this.renderAnimatingCurrent();
@@ -89,7 +86,7 @@ export default class Animation {
         process.stdout.write(`\r${this.getFrame()} \n`);
 
         if (this.config.store) {
-            this.terminalStore = null;
+            this.meta.store(this);
         }
     }
 

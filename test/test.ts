@@ -1,17 +1,19 @@
 import { terminal } from "../src/Main";
 
 const ani = terminal.animate({
-    message: "Hello :o"
+    message: "Hello :o",
+    store: true
 });
 
 setTimeout(() => {
-    ani.stop();
+    terminal.getAnimation()?.stop();
 
     const ani2 = terminal.animate({
-        message: "Hello :o"
+        message: "Hello :o",
+        store: true
     });
     
     setTimeout(() => {
-        ani2.stop();
+        terminal.getAnimation()?.stop();
     }, 1000);
 }, 1000);

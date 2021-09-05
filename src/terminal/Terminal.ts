@@ -8,6 +8,7 @@ export default class Terminal {
 	public stdin = new Stdin();
 	public tag = new Tag();
     public prefix? = "";
+    public animationStore: null | Animation = null;
 	public charset = { 
 		logIcon: "•", 
 		stateColors: {
@@ -17,8 +18,6 @@ export default class Terminal {
 			info: "#60ffab"
 		} 
 	};
-
-    private animationStore: null | Animation = null;
 
 	public log(message: string) {
 		console.info(this.prefix + (this.prefix ? "  " : "") + chalk.hex(this.charset.stateColors.info)(this.charset.logIcon) + "  " + message)
@@ -53,7 +52,9 @@ export default class Terminal {
 	}
 
 	public animate(options: AnimationOptions): Animation {
-        return new Animation(options, this.animationStore);
+        return new Animation(options, (animation: Animation) => {
+            this.animationStore = animation;
+        });
 	}
 
     public getAnimation(): Animation | null {
