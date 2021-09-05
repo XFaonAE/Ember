@@ -19,6 +19,8 @@
             transition: 100ms;
             box-shadow: inset 0 3px 5px #999999, 0 3px 5px #99999900;
             padding: 10px;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         /* .co:hover {
@@ -84,6 +86,26 @@
             th.css({
                 height: thH,
                 "top": thT +"px"
+            });
+
+            th.mousedown(() => {
+                $(document).mousemove((e) => {
+                    var distance = e.clientY - co.scrollTop() - th.scrollTop() / 2;
+                    if (distance < 0) {
+                        distance = 0;
+                    } else if (distance + th.outerHeight() > co.outerHeight()) {
+                        distance = co.outerHeight() - th.outerHeight()
+                    }
+
+                    th.css({
+                        height: thH,
+                        "top": distance + "px"
+                    });
+                });
+
+                th.mouseup(() => {
+                    bar.unbind("mousemove");
+                });
             });
         }
 
